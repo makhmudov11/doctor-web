@@ -5,7 +5,7 @@ class CustomUserRoleChoices(models.TextChoices):
     SHIFOKOR = "Shifokor", _("Shifokor")
     ADMIN = "Admin", _("Admin")
     SUPERADMIN = "SuperAdmin", _("SuperAdmin")
-    FOYDALANUVCHI = "FOYDALANUVCHI", _("FOYDALANUVCHI")
+    BEMOR = "BEMOR", _("Bemor")
     KLINIKA = "Klinika", _("Klinika")
     COMPANY = "PharmCompany", _("PharmCompany")
     MEDBRAT = "MedBrat", _("MedBrat")
@@ -24,4 +24,4 @@ class UserContactTypeChoices(models.TextChoices):
 
 
 def default_roles():
-    return [CustomUserRoleChoices.FOYDALANUVCHI]
+    return [CustomUserRoleChoices.BEMOR]

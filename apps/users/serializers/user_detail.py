@@ -5,6 +5,7 @@ from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
 
 from apps.users.choices import CustomUserRoleChoices
+from apps.utils.CustomValidationError import CustomValidationError
 from apps.utils.base_models import GenderChoices
 
 User = get_user_model()
@@ -52,8 +53,12 @@ class UserDetailUpdateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['contact', 'full_name', 'birth_date', 'image', 'gender']
+        fields = [ 'contact', 'full_name', 'birth_date', 'image', 'gender']
 
+class UserDetailRetrieveSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = [ 'contact', 'full_name', 'birth_date', 'image', 'gender']
 
 class UserSelectRoleSerializer(serializers.Serializer):
     role = serializers.JSONField(default=list)
@@ -61,3 +66,10 @@ class UserSelectRoleSerializer(serializers.Serializer):
 
 class UserChangeRoleSerializer(serializers.Serializer):
     role = serializers.ChoiceField(choices=CustomUserRoleChoices.choices)
+
+    if not role:
+        raise CustomValidationError(detail=f"Ruxsat etilmagan role {role}")
+
+
+class UserDetailUpdateSendCodeSerializer(serializers.Serializer):
+    contact = serializers.CharField(max_length=255)

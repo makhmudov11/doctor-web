@@ -7,7 +7,7 @@ from google.auth.transport import requests
 
 from apps.users.models import UserSocialAuthRegistrationTypeChoices, UserContactTypeChoices
 from apps.users.social_auth.save_picture import save_profile_picture_from_url
-from apps.utils import CustomResponse
+from apps.utils.CustomResponse import CustomResponse
 from apps.utils.token_claim import get_tokens_for_user
 from config.settings import SOCIAL_AUTH_KEYS
 from google.oauth2 import id_token

@@ -1,15 +1,18 @@
+from datetime import timedelta
+
+from apps.utils.BaseClass import BaseVerifyCode
 from django.contrib.auth import get_user_model
 from django.utils import timezone
-from rest_framework.status import HTTP_201_CREATED
 from rest_framework.views import APIView
 
-from apps.users.models import SmsCode, SmsCodeTypeChoices
+from apps.users.choices import UserContactTypeChoices
+from apps.users.models import SmsCode
 from apps.users.serializers.sms_code import SmsCodeSerializer, ResendCodeSerializer, VerifyCodeSerializer
-from apps.users.serializers.user_detail import UserFullDataSerializer
 from apps.users.tasks import send_verification_code
-from apps.utils import CustomResponse
+from apps.utils.CustomResponse import CustomResponse
+from apps.utils.eskiz import EskizUZ
 from apps.utils.generate_code import generate_code
-from apps.utils.token_claim import get_tokens_for_user
+from apps.utils.validates import validate_email_or_phone_number
 
 User = get_user_model()
 
@@ -43,7 +46,7 @@ class VerifyCodeAPIView(APIView):
 
         if code != user_code_obj.send_code:
             user_code_obj.attempts += 1
-            user_code_obj.save()
+            user_code_obj.save(update_fields=['attempts'])
 
             if user_code_obj.attempts == self.MAX_ATTEMPTS:
                 return CustomResponse.error_response(message="Urinishlar soni tugadi.")
@@ -55,32 +58,7 @@ class VerifyCodeAPIView(APIView):
                     "attempts": self.MAX_ATTEMPTS - user_code_obj.attempts
                 },
             )
-
-        if user_code_obj._type == SmsCodeTypeChoices.REGISTER:
-            user.status = True
-            user.save()
-            user_data = UserFullDataSerializer(user).data
-            user_code_obj.verified = True
-            user_code_obj.save()
-            return CustomResponse.success_response(
-                message="Registratsiya muvaffqaiyatli bajarildi, foydalanuvchi yaratildi",
-                data=user_data, code=HTTP_201_CREATED)
-        elif user_code_obj._type == SmsCodeTypeChoices.CHANGE_PASSWORD:
-            user_code_obj.verified = True
-            user_code_obj.save()
-            return CustomResponse.success_response(
-                message="Parol o'zgartirish uchun kod tasdiqlandi",
-                data={"user": user}
-            )
-        else:
-            user_code_obj.verified = True
-            user_code_obj.save()
-            token = get_tokens_for_user(user)
-            user = UserFullDataSerializer(user).data
-            return CustomResponse.success_response(
-                message="Login muvaqqiyatli yakunlandi",
-                data={"user": user, "token": token}
-            )
+        return BaseVerifyCode.sms_code_type_response(user_code_obj, user)
 
 
 class ResendCode(APIView):
@@ -96,26 +74,43 @@ class ResendCode(APIView):
 
         user_code_obj = SmsCode.objects.filter(
             contact=contact,
-            verified=False,
-            delete_obj__gte=timezone.now()
+            verified=False
         ).order_by('-created_at').first()
 
         if not user_code_obj:
-            return CustomResponse.error_response(message='Kod topilmadi.')
+            return CustomResponse.error_response(message='Kod topilmadi')
 
-        if user_code_obj.resend_code >= self.MAX_RESEND_CODE:
+        if user_code_obj.expires_at > timezone.now():
+            return CustomResponse.error_response(message='Kod amal qilish muddati tugamagan')
+
+        if user_code_obj.resend_code == self.MAX_RESEND_CODE:
+            user_code_obj.delete()
             return CustomResponse.error_response(
-                message="Urinishlar soni tugadi.",
-                data=SmsCodeSerializer(user_code_obj).data
+                message="Hech qanday kod topilmadi.",
             )
 
         code = generate_code()
         user_code_obj.resend_code += 1
         user_code_obj.expires_at = timezone.now() + timedelta(seconds=180)
         user_code_obj.attempts = 0
-        user_code_obj.hash_code = make_password(code)
-        user_code_obj.save()
-        send_verification_code(contact, code)
+        user_code_obj.send_code = code
+        user_code_obj.save(update_fields=['resend_code', 'expires_at', 'attempts', 'send_code'])
+        contact_type = validate_email_or_phone_number(contact)
+        try:
+            if contact_type == UserContactTypeChoices.EMAIL:
+                send_verification_code(contact, code)
+            elif contact_type == UserContactTypeChoices.PHONE:
+                phone = contact.lstrip('+')
+                send_code = EskizUZ.send_sms_phone_number(phone_number=phone, code=code)
+                if not send_code['success']:
+                    return CustomResponse.error_response(
+                        message=send_code['message'],
+                        data=send_code['data']
+                    )
+        except Exception as e:
+            return CustomResponse.error_response(
+                message='Kod yuborishda xatolik'
+            )
         sms_code_obj = SmsCodeSerializer(user_code_obj).data
         return CustomResponse.success_response(
             data={

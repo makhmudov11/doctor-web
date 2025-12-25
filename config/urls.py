@@ -14,10 +14,13 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+from django.conf import settings
+from django.conf.urls.static import static
 from django.contrib import admin
 from django.http import HttpResponse
 from django.urls import path, include
 
+import config.settings
 from apps.utils.swagger.swagger_urls import SPECTACULAR_URL
 
 def home(request):
@@ -25,12 +28,15 @@ def home(request):
 
 urlpatterns = [
     path('super-admin/', admin.site.urls),
-    # path('admin/', include('apps.admin.urls', namespace='custom_admin')),
+    path('admin/', include('apps.admin.urls', namespace='custom_admin')),
     path('users/', include('apps.users.urls', namespace='users')),
     path('', home, name='home'),
-    # path('profile/', include('apps.profile.urls', namespace='profile')),
+    path('profile/', include('apps.profile.urls', namespace='profile')),
 
 ] + SPECTACULAR_URL
 
+if config.settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 

@@ -1,4 +1,4 @@
-from django.contrib.auth import get_user_model
+from django.contrib.auth import get_user_model, logout
 from django.contrib.auth.hashers import make_password
 from django.db import transaction
 from rest_framework import status
@@ -14,7 +14,7 @@ from apps.users.serializers.auth import RegisterSerializer, LoginSerializer, Log
 from apps.users.serializers.user_detail import UserFullDataSerializer
 
 from apps.users.tasks import send_verification_code
-from apps.utils import CustomResponse
+from apps.utils.CustomResponse import CustomResponse
 from apps.utils.eskiz import EskizUZ
 from apps.utils.generate_code import generate_code
 from apps.utils.validates import validate_email_or_phone_number
@@ -87,7 +87,7 @@ class LoginAPIView(APIView):
         password = serializer.validated_data.get('password').strip()
 
         try:
-            user = User.objects.get(contact=contact, status=True)
+            user = User.objects.get(contact=contact, status=True, is_active=True)
         except User.DoesNotExist:
             return CustomResponse.error_response(message="User topilmadi", code=HTTP_404_NOT_FOUND)
 
@@ -96,7 +96,6 @@ class LoginAPIView(APIView):
 
         code = generate_code()
         try:
-
             SmsCode.create_for_contact(contact=contact,
                                        code=code,
                                        _type=SmsCodeTypeChoices.LOGIN)
@@ -136,16 +135,25 @@ class UserLogoutAPIView(APIView):
     def post(self, request):
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
-        refresh_token = serializer.validated_data.get('refresh_token')
+        refresh_token = serializer.validated_data.get('refresh_token').split()
         try:
             token = RefreshToken(refresh_token)
             token.blacklist()
 
             return CustomResponse.success_response(
-                message='Logout muvaffaqiyatli bajarildi'
+                message='Chiqish muvaffaqiyatli bajarildi'
             )
         except TokenError:
             return CustomResponse.error_response(
                 message='Refresh token yaroqsiz',
                 code=HTTP_400_BAD_REQUEST
             )
+
+
+class UserDeleteAccount(APIView):
+    permission_classes = [IsAuthenticated]
+    def post(self, request):
+       request.user.is_active = False
+       return CustomResponse.success_response(
+           message="Muvaffaqiyatli o'chirildi"
+       )

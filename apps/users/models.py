@@ -25,7 +25,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin, CreateUpdateBaseModel):
     active_role = models.CharField(
         max_length=100,
         choices=CustomUserRoleChoices.choices,
-        default=CustomUserRoleChoices.FOYDALANUVCHI,
+        default=CustomUserRoleChoices.BEMOR,
         null=True,
         blank=True
     )
@@ -66,6 +66,7 @@ class SmsCodeTypeChoices(models.TextChoices):
     LOGIN = 'login', 'login'
     REGISTER = 'register', 'register'
     CHANGE_PASSWORD = 'change-password', 'change password'
+    UPDATE_CONTACT = 'update-contact', 'update-contact'
 
 
 class SmsCode(CreateUpdateBaseModel):
@@ -101,7 +102,7 @@ class SmsCode(CreateUpdateBaseModel):
             contact=contact,
             send_code=code,
             expires_at=timezone.now() + timedelta(seconds=second),
-            delete_obj=timezone.now() + timedelta(seconds=second + 15),
+            delete_obj=timezone.now() + timedelta(seconds=second + 60),
             _type=_type
         )
         return sms_code_obj

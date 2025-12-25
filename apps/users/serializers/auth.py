@@ -13,8 +13,8 @@ User = get_user_model()
 
 class RegisterSerializer(serializers.ModelSerializer):
     birth_date = serializers.DateField(
-        input_formats=["%d.%m.%Y"],
-        format=["%d.%m.%Y"]
+        input_formats=["%d.%m.%Y", "%d/%m/%Y"],
+        required=True
     )
 
     class Meta:
@@ -23,7 +23,9 @@ class RegisterSerializer(serializers.ModelSerializer):
         extra_kwargs = {
             "password": {"write_only": True},
             "status": {"read_only": True},
-            "created_at": {"read_only": True}
+            "full_name": {"required": True},
+            "passport": {"required": True},
+            "gender": {"required": True}
         }
 
     def validate(self, attrs):

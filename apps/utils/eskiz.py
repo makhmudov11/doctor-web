@@ -12,8 +12,8 @@ class EskizUZ:
     GET_TOKEN_URL = "https://notify.eskiz.uz/api/auth/login"
     SEND_SMS_URL = "https://notify.eskiz.uz/api/message/sms/send"
 
-    _AUTH_CODE_MESSAGE = "Tasdiqlash kodingiz: {code}"
-    _FORGOT_PASSWORD_MESSAGE = "Parolni tiklash kodingiz: {code}"
+    _AUTH_CODE_MESSAGE = "SINON ilovasida ro'yxatdan o'tish uchun tasdiqlash kodi - {code}"
+    # _FORGOT_PASSWORD_MESSAGE = "Parolni tiklash kodingiz: {code}"
 
     _ESKIZ_EMAIL = decouple.config("ESKIZ_EMAIL")
     _ESKIZ_PASSWORD = decouple.config("ESKIZ_PASSWORD")

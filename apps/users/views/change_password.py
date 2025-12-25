@@ -10,7 +10,7 @@ from apps.users.models import SmsCode, SmsCodeTypeChoices
 from apps.users.serializers.auth import UserForgotPasswordSerializer, UserResetPasswordSerializer
 from apps.users.serializers.user_detail import UserFullDataSerializer
 from apps.users.tasks import send_verification_code
-from apps.utils import CustomResponse
+from apps.utils.CustomResponse import CustomResponse
 from apps.utils.eskiz import EskizUZ
 from apps.utils.generate_code import generate_code
 
@@ -81,14 +81,14 @@ class UserResetPasswordAPIView(APIView):
 
         user_code_obj = SmsCode.objects.filter(
             contact=contact,
-            expires_at__gte=timezone.now(),
+            delete_obj__gte=timezone.now(),
             _type=SmsCodeTypeChoices.CHANGE_PASSWORD,
             verified=True
         ).order_by('-created_at').first()
 
 
         if not user_code_obj:
-            return CustomResponse.error_response(message="Kod almashtirish imkoni yo'q")
+            return CustomResponse.error_response(message="Kod almashtirish imkoni yo'q, kod tasdiqlanmagan")
 
         try:
             validate_password(password, user)

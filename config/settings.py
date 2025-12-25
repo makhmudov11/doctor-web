@@ -31,7 +31,8 @@ ALLOWED_HOSTS = decouple.config('ALLOWED_HOSTS', cast=decouple.Csv())
 
 # Application definition
 CUSTOM_APPS = [
-    'apps.users'
+    'apps.users',
+    'apps.profile',
 ]
 
 CUSTOM_INSTALLED_APPS = [
