@@ -3,13 +3,13 @@ from django.db import models
 from django.utils.text import slugify
 
 from apps.utils.base_models import CreateUpdateBaseModel
-from apps.utils.generate_code import generate_public_id
+from apps.utils.generate_code import generate_public_id, generate_code
 
 User = get_user_model()
 
 
 class PatientProfile(CreateUpdateBaseModel):
-    public_id = models.PositiveBigIntegerField(unique=True, db_index=True)
+    public_id = models.PositiveBigIntegerField(unique=True, db_index=True, default=generate_code)
     user = models.OneToOneField(User,
                                 on_delete=models.SET_NULL,
                                 null=True,

@@ -14,10 +14,11 @@ User = get_user_model()
 
 
 class Follow(CreateUpdateBaseModel):
-    profile_content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE, related_name='followings')
+    profile_content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE, null=True,
+                                             related_name='followings')
     profile_obj_id = models.PositiveIntegerField()
     profile = GenericForeignKey('profile_content_type', 'profile_obj_id')
-    following = models.ForeignKey(DoctorProfile, on_delete=models.CASCADE, related_name='followers')
+    following = models.ForeignKey('DoctorProfile', on_delete=models.SET_NULL, null=True, related_name='followers')
     status = models.CharField(max_length=50, null=True,
                               default=FollowChoices.FOLLOW,
                               choices=FollowChoices.choices)
@@ -38,7 +39,7 @@ class Follow(CreateUpdateBaseModel):
         verbose_name_plural = 'Follows'
 
     def clean(self):
-        if self.following.user.active_role != CustomUserRoleChoices.SHIFOKOR:
+        if self.following and self.following.user.active_role != CustomUserRoleChoices.SHIFOKOR:
             raise ValidationError("Faqat shifokorlaga obuna bo'lish mumkin")
 
     @staticmethod
@@ -57,4 +58,8 @@ class Follow(CreateUpdateBaseModel):
         ).count()
 
     def __str__(self):
-        return f"{self.profile.full_name} --> {self.following.full_name}"
+        if self.profile and self.following:
+            profile_name = self.profile.user.full_name if self.profile.user.full_name else "No Profile Name"
+            following_name = self.following.user.full_name if self.following.user.full_name else "No Following Name"
+            return f"{profile_name} --> {following_name}"
+        return str(self.pk)

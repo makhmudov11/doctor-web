@@ -6,33 +6,51 @@ from apps.profile.patient.models import PatientProfile
 from apps.users.serializers.user_detail import UserListSerializer
 from apps.utils.CustomValidationError import CustomValidationError
 
-
-class PatientFollowListSerializer(serializers.ModelSerializer):
-    user = UserListSerializer(source='profile.user')
-    follows = DoctorProfileSerializer(source='following', many=True)
+class PatientProfileSerializer(serializers.ModelSerializer):
+    user = UserListSerializer()
 
     class Meta:
-        model = Follow
-        fields = ['user', 'follows']
+        model = PatientProfile
+        fields = ['id', 'public_id', 'following_count', 'user']
+
+
+
+
+
+
 
 
 
 class PatientFollowUserSerializer(serializers.Serializer):
-    profile_public_id = serializers.CharField(max_length=50)
+    profile = PatientProfileSerializer(read_only=True)
+    follows = DoctorProfileSerializer(source='following', read_only=True)
+
+    class Meta:
+        model = Follow
+        fields = ['profile', 'follows']
+
 
     def validate(self, attrs):
-        profile_public_id = attrs.get('profile_public_id')
+        profile_public_id = self.context.get('profile_public_id')
+        if profile_public_id is None:
+            raise CustomValidationError(
+                detail='Profile public id kelishi shart'
+            )
+        if isinstance(profile_public_id, int):
+            return CustomValidationError(detail="Public id integer bo'lishi kerak")
+        return attrs
+
+
+
+class PatientUnFollowUserSerializer(serializers.Serializer):
+
+    def validate(self, attrs):
+        profile_public_id = self.context.get('profile_public_id')
         if not profile_public_id:
             raise CustomValidationError(
                 detail='Profile public id kelishi shart'
             )
         return attrs
 
-    def save(self, **kwargs):
-        patient_profile = self.context['request'].user.patient_profile
-        if not isinstance(patient_profile, PatientProfile):
-            raise CustomValidationError(
-                detail='Userga tegishli profile mavjud emas'
-            )
-        self.following_count = Follow.get_follow_count(profile=patient_profile) + 1
-        super().save(**kwargs)
+
+

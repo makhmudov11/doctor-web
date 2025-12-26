@@ -19,16 +19,23 @@
 #     ordering = ('-created_at',)
 #
 #
-# @admin.register(PatientProfile)
-# class PatientProfileAdmin(admin.ModelAdmin):
-#     list_display = [
-#         'public_id',
-#         'full_name',
-#         'followers_count',
-#         'following_count',
-#         'posts_count',
-#         'is_private',
-#     ]
+from django.contrib import admin
+
+from apps.profile.doctor.models import DoctorProfile
+from apps.profile.follow.models import Follow
+from apps.profile.patient.models import PatientProfile
+
+
+@admin.register(PatientProfile)
+class PatientProfileAdmin(admin.ModelAdmin):
+    list_display = [
+        'public_id',
+        'user_full_name', #method
+        'following_count',
+     ]
+
+    def user_full_name(self, obj):
+        return obj.user.full_name
 #
 #     search_fields = (
 #         'profile__full_name',
@@ -57,16 +64,38 @@
 #         return obj.profile.is_private
 #
 #
-# @admin.register(DoctorProfile)
-# class DoctorProfileAdmin(admin.ModelAdmin):
-#     list_display = (
-#         'public_id',
-#         'full_name',
-#         'specialization',
-#         'experience_years',
-#         'followers_count',
-#         'is_private',
-#     )
+@admin.register(DoctorProfile)
+class DoctorProfileAdmin(admin.ModelAdmin):
+    list_display = (
+        'public_id',
+        'user_full_name', #method
+        'specialization',
+        'experience_years',
+        'followers_count',
+        'is_private',
+    )
+
+    def user_full_name(self, obj):
+        return obj.user.full_name
+
+
+
+@admin.register(Follow)
+class FollowAdmin(admin.ModelAdmin):
+    list_display = ['profile', 'following', 'status', 'created_at']
+
+    def show_profile(self, obj):
+        if obj.profile:
+            return obj.profile.user.full_name
+        return obj.id
+
+
+    def show_following(self, obj):
+        if obj.following:
+            return obj.following.user.full_name
+        return obj.id
+
+
 #
 #     search_fields = (
 #         'profile__full_name',

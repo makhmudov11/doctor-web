@@ -3,13 +3,13 @@ from django.db import models
 from rest_framework.exceptions import ValidationError
 from apps.users.choices import CustomUserRoleChoices
 from apps.utils.base_models import CreateUpdateBaseModel
-from apps.utils.generate_code import generate_public_id
+from apps.utils.generate_code import generate_public_id, generate_code
 
 User = get_user_model()
 
 
 class DoctorProfile(CreateUpdateBaseModel):
-    public_id = models.PositiveBigIntegerField(unique=True)
+    public_id = models.PositiveBigIntegerField(unique=True, default=generate_code)
     user = models.OneToOneField(User, on_delete=models.SET_NULL, null=True, related_name='doctor_profile')
     username = models.CharField(max_length=200, null=True, unique=True, db_index=True)
     specialization = models.CharField(max_length=255, null=True)

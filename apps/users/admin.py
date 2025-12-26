@@ -8,7 +8,7 @@ User = get_user_model()
 
 @admin.register(User)
 class CustomUserAdmin(admin.ModelAdmin):
-    list_display = ['id', 'contact', 'contact_type', 'passport',
+    list_display = ['id', 'contact', 'roles', 'contact_type', 'passport',
                     'status', 'active_role', 'gender', 'created_at', 'is_active',
                     'is_staff'
                     ]
