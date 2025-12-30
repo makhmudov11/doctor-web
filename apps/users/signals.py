@@ -1,7 +1,7 @@
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
-from apps.profile.patient.models import PatientProfile
+from apps.profile.models import PatientProfile
 from apps.users.choices import CustomUserRoleChoices
 from apps.users.models import CustomUser
 

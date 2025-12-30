@@ -1,30 +1,30 @@
-from django.urls import path, include
+from django.urls import path
+
+from apps.profile.views.follows import (UserFollowListAPIView, UserUnfollowUserAPIView,
+                                        UserFollowCreateAPIView, UserFollowerListAPIView)
+from apps.profile.views.profiles import UserProfileRetrieveAPIView
+from apps.profile.views.stories import UserStoryCreateAPIView, UserActiveStoryListAPIView, StoryMarkViewedAPIView, \
+    UserStoryDeleteAPIView, UserStoryViewedAllListAPIView
 
 app_name = 'profile'
 
 urlpatterns = [
-    path('doctor/', include('apps.profile.doctor.urls', namespace='doctor')),
-    path('patient/', include('apps.profile.patient.urls', namespace='patient')),
-]
+    path('detail/me/', UserProfileRetrieveAPIView.as_view(), name='profile-detail'),
+    path('follow/<int:profile_public_id>/', UserFollowCreateAPIView.as_view(),
+         name='patient-follow-user'),
+    path('unfollow/<int:profile_public_id>/', UserUnfollowUserAPIView.as_view(),
+         name='user-unfollow-user'),
+    path('follow/list/', UserFollowListAPIView.as_view(), name='profile-follow-list'),
+    path('followers/list/', UserFollowerListAPIView.as_view(), name='profile-followers-list'),
+    path('story/create/', UserStoryCreateAPIView.as_view(), name='user-story-create'),
+    path('active/story/', UserActiveStoryListAPIView.as_view(),
+         name='doctor-active-story-list'),
+    path('story/viewed/<int:story_id>/', StoryMarkViewedAPIView.as_view(), name='story-viewed'),
+    path('story/delete/<int:story_id>/', UserStoryDeleteAPIView.as_view(), name='story-delete'),
+    path('story/viewed/<int:story_id>/all/', UserStoryViewedAllListAPIView.as_view(), name='story-viewed-all'), # tekshirilmagan
 
 
 
-
-# urlpatterns = [
     # path('list/', UserProfileListAPIView.as_view(), name='profile-list'),
-    # path('create/', UserProfileCreateAPIView.as_view(), name='profile-create'),
-    # path('me/', UserMyProfileRetrieveAPIView.as_view(), name='my-profile'),
-    # path('me/detail', UserMyProfileDetailRetrieveUpdateDestroyAPIView.as_view(), name='my-profile-detail'),
-    # path('detail/<int:profile_public_id>', UserProfileRetrieveAPIView.as_view(), name='profile-detail-other'),
-    # path('story/create/', UserStoryCreateAPIView.as_view(), name='story_create'),
     # path('story/list/', UserStoryListAPIView.as_view(), name='story_list'),
-    # path('story/active/', UserActiveStoryListAPIView.as_view(), name='story_active'),
-    # path('story/<int:story_public_id>/view/', UserStoryMarkViewedAPIView.as_view(), name='story_view'),
-    # path('<int:profile_public_id>/follow/', UserProfileFollowAPIView.as_view(), name='following'),
-    # path('<int:profile_public_id>/unfollow/', UserUnFollowAPIView.as_view(), name='unfollow'),
-    #
-    # path('followers/me', UserUnFollowAPIView.as_view(), name='followers-me'),
-    # path('following/me', UserUnFollowAPIView.as_view(), name='followers-me'),
-    # path('<int:profile_public_id>/followers/', UserUnFollowAPIView.as_view(), name='users-followers'),
-    # path('<int:profile_public_id>/following/', UserUnFollowAPIView.as_view(), name='users-following'),
-# ]
+]

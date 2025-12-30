@@ -4,6 +4,7 @@ cachetools==6.2.4
 certifi==2025.11.12
 charset-normalizer==3.4.4
 Django==4.2.16
+django-background-tasks==1.2.8
 django-filter==23.5
 djangorestframework==3.16.1
 djangorestframework_simplejwt==5.5.1
@@ -24,6 +25,7 @@ referencing==0.37.0
 requests==2.32.5
 rpds-py==0.30.0
 rsa==4.9.1
+six==1.17.0
 sqlparse==0.5.5
 typing_extensions==4.15.0
 tzdata==2025.3

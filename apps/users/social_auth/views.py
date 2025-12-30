@@ -6,6 +6,7 @@ from rest_framework import status
 from google.auth.transport import requests
 
 from apps.users.models import UserSocialAuthRegistrationTypeChoices, UserContactTypeChoices
+from apps.users.serializers.user_detail import UserFullDataSerializer
 from apps.users.social_auth.save_picture import save_profile_picture_from_url
 from apps.utils.CustomResponse import CustomResponse
 from apps.utils.token_claim import get_tokens_for_user
@@ -60,7 +61,7 @@ class UserGoogleSocialAuthAPIView(APIView):
                 message = "Google orqali login muvaffaqiyatli bajarildi."
 
             token = get_tokens_for_user(user)
-            user = UserSerializer(user).data
+            user = UserFullDataSerializer(user).data
             return CustomResponse.success_response(
                 message=message,
                 data={
@@ -125,7 +126,7 @@ class UserFacebookSocialAuthAPIView(APIView):
                 save_profile_picture_from_url(user=user, picture_url=profile_pic_url)
 
             token = get_tokens_for_user(user)
-            user = UserSerializer(user).data
+            user = UserFullDataSerializer(user).data
             if created:
                 message = "Facebook orqali muvaffaqiyatli ro'yhatdan o'dingiz."
             else:
@@ -193,7 +194,7 @@ class UserAppleSocialAuthAPIView(APIView):
             save_profile_picture_from_url(user=user, picture_url=default_avatar_url)
 
         token = get_tokens_for_user(user)
-        user = UserSerializer(user).data
+        user = UserFullDataSerializer(user).data
         if created:
             message = "Apple orqali muvaffaqiyatli ro'yhatdan o'dingiz."
         else:

@@ -57,6 +57,8 @@ class CustomUser(AbstractBaseUser, PermissionsMixin, CreateUpdateBaseModel):
         return f"{self.full_name.title()}" or self.contact
 
     def save(self, *args, **kwargs):
+        if self.active_role not in self.roles:
+            self.roles.append(self.active_role)
         if not self.public_id:
             self.public_id = generate_public_id(CustomUser)
         super().save(*args, **kwargs)

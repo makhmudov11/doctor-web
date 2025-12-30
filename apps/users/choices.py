@@ -5,7 +5,7 @@ class CustomUserRoleChoices(models.TextChoices):
     SHIFOKOR = "Shifokor", _("Shifokor")
     ADMIN = "Admin", _("Admin")
     SUPERADMIN = "SuperAdmin", _("SuperAdmin")
-    BEMOR = "BEMOR", _("Bemor")
+    BEMOR = "Bemor", _("Bemor")
     KLINIKA = "Klinika", _("Klinika")
     COMPANY = "PharmCompany", _("PharmCompany")
     MEDBRAT = "MedBrat", _("MedBrat")

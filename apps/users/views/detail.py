@@ -13,6 +13,7 @@ from apps.users.tasks import send_verification_code
 from apps.utils.CustomResponse import CustomResponse
 from apps.utils.eskiz import EskizUZ
 from apps.utils.generate_code import generate_code
+from apps.utils.role_validate import RoleValidate
 from apps.utils.token_claim import get_tokens_for_user
 from apps.utils.validates import validate_email_or_phone_number
 
@@ -126,8 +127,15 @@ class UserChangeRoleAPIView(APIView):
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
         role = serializer.validated_data.get('role')
+        print(role)
 
         user = request.user
+        print(user.active_role)
+        print(RoleValidate.get_token_active_role(request))
+        if role == RoleValidate.get_token_active_role(request):
+            return CustomResponse.error_response(
+                message=f"Hozirgi rolingiz {user.active_role}, yana shunga o'zgartirib bo'lmaydi"
+            )
         if role not in getattr(user, 'roles', []):
             return CustomResponse.error_response(
                 message=f"Userda {role} ro'li mavjud emas"
