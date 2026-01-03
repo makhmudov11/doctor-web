@@ -23,6 +23,9 @@ User = get_user_model()
 
 
 class RegisterCreateAPIView(CreateAPIView):
+    """
+    Ro'yhatdan o'tish
+    """
     serializer_class = RegisterSerializer
     queryset = User.objects.all()
 
@@ -78,6 +81,9 @@ class RegisterCreateAPIView(CreateAPIView):
 
 
 class LoginAPIView(APIView):
+    """
+    Login qilish
+    """
     serializer_class = LoginSerializer
 
     def post(self, request):
@@ -129,6 +135,9 @@ class LoginAPIView(APIView):
 
 
 class UserLogoutAPIView(APIView):
+    """
+    Akkauntdan chiqish
+    """
     serializer_class = LogoutSerializer
     permission_classes = [IsAuthenticated]
 
@@ -151,6 +160,9 @@ class UserLogoutAPIView(APIView):
 
 
 class UserDeleteAccount(APIView):
+    """
+    Akkauntni butunlay o'chirish
+    """
     permission_classes = [IsAuthenticated]
     def post(self, request):
        request.user.is_active = False

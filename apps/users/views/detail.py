@@ -19,6 +19,9 @@ from apps.utils.validates import validate_email_or_phone_number
 
 
 class UserDetailUpdateAPIView(UpdateAPIView):
+    """
+    Akkaunt malumotlarini oz'gartish
+    """
     serializer_class = UserDetailUpdateSerializer
     permission_classes = [UserDetailPermission]
     parser_classes = [MultiPartParser, FormParser]
@@ -59,6 +62,9 @@ class UserDetailUpdateAPIView(UpdateAPIView):
 
 
 class UserDetailUpdateSendCodeAPIView(APIView):
+    """
+    Agar nomer o'zgartirmoqchi bo'lsa email yoki telefon raqamga kod jo'natish
+    """
     serializer_class = UserDetailUpdateSendCodeSerializer
     permission_classes = [UserDetailPermission]
 
@@ -98,6 +104,9 @@ class UserDetailUpdateSendCodeAPIView(APIView):
 
 
 class UserDetailRetrieveAPIView(RetrieveAPIView):
+    """
+    Akkaunt malumotlarni olish (detail)
+    """
     serializer_class = UserDetailRetrieveSerializer
     permission_classes = [UserDetailPermission]
     parser_classes = [MultiPartParser, FormParser]
@@ -107,6 +116,9 @@ class UserDetailRetrieveAPIView(RetrieveAPIView):
 
 
 class UserSelectRoleRetrieveAPIView(APIView):
+    """
+    Userga tegishli rolelar
+    """
     permission_classes = [UserDetailPermission]
 
     def get(self, request):
@@ -120,6 +132,9 @@ class UserSelectRoleRetrieveAPIView(APIView):
 
 
 class UserChangeRoleAPIView(APIView):
+    """
+    Roleni o'zgartirish
+    """
     permission_classes = [IsAuthenticated]
     serializer_class = UserChangeRoleSerializer
 

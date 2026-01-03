@@ -17,6 +17,9 @@ from apps.utils.role_validate import RoleValidate
 
 
 class UserFollowListAPIView(ListAPIView):
+    """
+    Userning follow qilgan userlar ro'yhatini olish
+    """
     permission_classes = [UserFollowListPermission]
 
     def get_queryset(self):
@@ -50,6 +53,9 @@ class UserFollowListAPIView(ListAPIView):
 
 
 class UserFollowCreateAPIView(CreateAPIView):
+    """
+    Follow qilish (follow yaratish, create)
+    """
     serializer_class = UserFollowCreateSerializer
     permission_classes = [UserFollowListPermission]
     queryset = Follow.objects.all()
@@ -102,6 +108,9 @@ class UserFollowCreateAPIView(CreateAPIView):
 
 
 class UserUnfollowUserAPIView(APIView):
+    """
+    Follow qilingan bo'lsa followni qaytarib olish
+    """
     serializer_class = UserUnFollowUserSerializer
     permission_classes = [UserFollowListPermission]
 
@@ -148,6 +157,9 @@ class UserUnfollowUserAPIView(APIView):
 
 
 class UserFollowerListAPIView(ListAPIView):
+    """
+    Userga follow qilganlar ro'yhati
+    """
     serializer_class = UserFollowersListSerializer
     permission_classes = [IsDoctor]
 

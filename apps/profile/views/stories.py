@@ -18,6 +18,9 @@ from apps.utils.role_validate import RoleValidate
 
 
 class UserStoryCreateAPIView(CreateAPIView):
+    """
+    Storis yaratish
+    """
     serializer_class = UserStoryCreateSerializer
     permission_classes = [IsDoctor]
     parser_classes = [MultiPartParser, FormParser]
@@ -37,6 +40,11 @@ class UserStoryCreateAPIView(CreateAPIView):
 
 
 class UserActiveStoryListAPIView(ListAPIView):
+    """
+     Storylar olish
+
+     Userning vaqti tugamagan active storylarini olish
+     """
     permission_classes = [DoctorStoryPermission]
 
     def get_queryset(self):
@@ -58,6 +66,9 @@ class UserActiveStoryListAPIView(ListAPIView):
 
 
 class StoryMarkViewedAPIView(APIView):
+    """
+    Storis korish
+    """
     permission_classes = [IsAuthenticated]
 
     def post(self, request, story_id):
@@ -98,6 +109,9 @@ class StoryMarkViewedAPIView(APIView):
 
 
 class UserStoryDeleteAPIView(DestroyAPIView):
+    """
+    Storisni ochirish
+    """
     permission_classes = [DoctorStoryPermission]
 
     def destroy(self, request, *args, **kwargs):
@@ -126,6 +140,9 @@ class UserStoryDeleteAPIView(DestroyAPIView):
 
 
 class UserStoryViewedAllListAPIView(ListAPIView):
+    """
+    User storisini ko'rganlar royhati
+    """
     permission_classes = [IsDoctor]
     serializer_class = UserStoryListSerializer
 

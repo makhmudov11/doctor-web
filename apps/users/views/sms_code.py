@@ -18,6 +18,9 @@ User = get_user_model()
 
 
 class VerifyCodeAPIView(APIView):
+    """
+    Kod tasdiqlash
+    """
     serializer_class = VerifyCodeSerializer
     MAX_ATTEMPTS = 3
 
@@ -62,6 +65,9 @@ class VerifyCodeAPIView(APIView):
 
 
 class ResendCode(APIView):
+    """
+    Kodni qaytadan yuborish
+    """
     serializer_class = ResendCodeSerializer
 
     MAX_RESEND_CODE = 3

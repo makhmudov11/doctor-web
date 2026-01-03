@@ -18,6 +18,9 @@ User = get_user_model()
 
 
 class UserForgotPasswordAPIView(APIView):
+    """
+    Parolni tiklash
+    """
     serializer_class = UserForgotPasswordSerializer
     permission_classes = [AllowAny]
 
@@ -62,6 +65,9 @@ class UserForgotPasswordAPIView(APIView):
 
 
 class UserResetPasswordAPIView(APIView):
+    """
+    Yangi parol kiritish
+    """
     serializer_class = UserResetPasswordSerializer
     permission_classes = [AllowAny]
 
