@@ -32,7 +32,7 @@ class UserFollowListAPIView(ListAPIView):
         )
         if not qs.exists():
             raise CustomValidationError(
-                detail=f'{self.request.user.full_name or '?'}ga tegishli followlar mavjud emas'
+                detail=f"{self.request.user.full_name or '?'}ga tegishli followlar mavjud emas"
             )
         return qs
 
