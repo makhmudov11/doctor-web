@@ -162,3 +162,6 @@ cython_debug/
 .idea/
 .env
 media/
+
+sudo systemctl restart gunicorn
+sudo systemctl status gunicorn
