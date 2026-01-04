@@ -2,14 +2,12 @@ from django.contrib.contenttypes.models import ContentType
 from django.db import transaction
 from rest_framework import status
 from rest_framework.generics import ListAPIView, CreateAPIView
-from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from apps.profile.choices import FollowChoices
 from apps.profile.models import DoctorProfile, Follow
-from apps.profile.permission import IsDoctor, IsPatient, UserFollowListPermission
-from apps.profile.serializers.follows import UserFollowCreateSerializer, UserUnFollowUserSerializer, \
-    UserFollowersListSerializer
+from apps.profile.permission import IsDoctor, UserFollowListPermission
+from apps.profile.serializers.follows import UserFollowCreateSerializer, UserUnFollowUserSerializer, UserFollowersListSerializer
 from apps.profile.serializers.profiles import GET_ROLE_SERIALIZER, DoctorProfileSerializer
 from apps.utils.CustomResponse import CustomResponse
 from apps.utils.CustomValidationError import CustomValidationError

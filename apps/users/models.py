@@ -65,7 +65,6 @@ class CustomUser(AbstractBaseUser, PermissionsMixin, CreateUpdateBaseModel):
 
 
 class SmsCodeTypeChoices(models.TextChoices):
-    LOGIN = 'login', 'login'
     REGISTER = 'register', 'register'
     CHANGE_PASSWORD = 'change-password', 'change password'
     UPDATE_CONTACT = 'update-contact', 'update-contact'

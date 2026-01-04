@@ -19,6 +19,7 @@ class PatientProfileAdmin(admin.ModelAdmin):
 @admin.register(DoctorProfile)
 class DoctorProfileAdmin(admin.ModelAdmin):
     list_display = (
+        'id',
         'public_id',
         'user_full_name',  # method
         'specialization',

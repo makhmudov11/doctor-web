@@ -31,15 +31,18 @@ ALLOWED_HOSTS = decouple.config('ALLOWED_HOSTS', cast=decouple.Csv())
 
 # Application definition
 CUSTOM_APPS = [
+    'apps.super_admin',
     'apps.users',
     'apps.profile',
+    'apps.video',
 ]
 
 CUSTOM_INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt',
     'drf_spectacular',
-    'background_task'
+    'background_task',
+    'rest_framework_simplejwt.token_blacklist',
 
 ]
 
@@ -55,6 +58,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -116,12 +120,20 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'uz'
+
+LANGUAGES = [
+    ('uz', "O'zbekcha"),
+    ('ru', 'Russian'),
+    ('en', 'English')
+]
+USE_I18N = True
+LOCALE_PATHS = [
+    os.path.join(BASE_DIR, 'locale'),
+]
 
 TIME_ZONE = 'Asia/Tashkent'
 USE_TZ = True
-
-USE_I18N = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
@@ -143,20 +155,22 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
-    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
     'DEFAULT_FILTER_BACKENDS': [
         'django_filters.rest_framework.DjangoFilterBackend'
     ],
     "DATETIME_FORMAT": "%Y-%m-%d %H:%M:%S",
     "DATE_FORMAT": "%Y-%m-%d",
+    'EXCEPTION_HANDLER': 'apps.utils.custom_permission.custom_exception_handler',
+
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
 ]
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(days=10),
-    "REFRESH_TOKEN_LIFETIME": timedelta(days=20),
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=30),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
     'AUTH_HEADER_TYPES': ('Bearer',),
     "ROTATE_REFRESH_TOKENS": True,
     "BLACKLIST_AFTER_ROTATION": True,

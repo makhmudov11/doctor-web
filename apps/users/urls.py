@@ -4,7 +4,7 @@ from django.urls import path
 
 from apps.users.social_auth.views import (UserGoogleSocialAuthAPIView, UserFacebookSocialAuthAPIView,
                                           UserAppleSocialAuthAPIView)
-from apps.users.views.auth import RegisterCreateAPIView, LoginAPIView, UserLogoutAPIView
+from apps.users.views.auth import RegisterCreateAPIView, LoginAPIView, UserLogoutAPIView, UserDeleteAccount
 from apps.users.views.change_password import UserForgotPasswordAPIView, UserResetPasswordAPIView
 from apps.users.views.detail import UserSelectRoleRetrieveAPIView, UserDetailRetrieveAPIView, \
     UserDetailUpdateAPIView, UserChangeRoleAPIView, UserDetailUpdateSendCodeAPIView
@@ -19,6 +19,7 @@ urlpatterns = [
     path('forgot-password/', UserForgotPasswordAPIView.as_view(), name='forgot-password'),
     path('reset-password/', UserResetPasswordAPIView.as_view(), name='reset-password'),
     path('logout/', UserLogoutAPIView.as_view(), name='reset-password'),
+    path('delete/account/', UserDeleteAccount.as_view(), name='delete-account'),
     path('auth/social/google/', UserGoogleSocialAuthAPIView.as_view(), name='auth-social-google'),
     path('auth/social/facebook/', UserFacebookSocialAuthAPIView.as_view(), name='auth-social-facebook'),
     path('auth/social/apple/', UserAppleSocialAuthAPIView.as_view(), name='auth-social-apple'),

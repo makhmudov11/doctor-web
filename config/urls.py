@@ -19,21 +19,26 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.http import HttpResponse
 from django.urls import path, include
+from rest_framework_simplejwt.views import TokenRefreshView
 
 import config.settings
 from apps.utils.swagger.swagger_urls import SPECTACULAR_URL
 
 def home(request):
-    return HttpResponse("Salom, bu mening asosiy sahifam!")
+    return HttpResponse("Home page")
+TOKEN_REFRESH = [
+    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh')
+]
 
 urlpatterns = [
-    path('super-admin/', admin.site.urls),
-    path('admin/', include('apps.admin.urls', namespace='custom_admin')),
+    path('admin/', admin.site.urls),
+    path('super-admin/', include('apps.super_admin.urls', namespace='super_admin')),
     path('users/', include('apps.users.urls', namespace='users')),
     path('', home, name='home'),
     path('profile/', include('apps.profile.urls', namespace='profile')),
+    path('content/', include('apps.video.urls', namespace='content')),
 
-] + SPECTACULAR_URL
+] + SPECTACULAR_URL + TOKEN_REFRESH
 
 if config.settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

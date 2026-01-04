@@ -7,6 +7,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.status import HTTP_400_BAD_REQUEST, HTTP_401_UNAUTHORIZED, HTTP_404_NOT_FOUND
 from rest_framework.views import APIView
 from rest_framework_simplejwt.exceptions import TokenError
+from rest_framework_simplejwt.token_blacklist.models import OutstandingToken
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from apps.users.models import SmsCodeTypeChoices, UserContactTypeChoices, SmsCode
@@ -17,6 +18,7 @@ from apps.users.tasks import send_verification_code
 from apps.utils.CustomResponse import CustomResponse
 from apps.utils.eskiz import EskizUZ
 from apps.utils.generate_code import generate_code
+from apps.utils.token_claim import get_tokens_for_user, token_blacklist
 from apps.utils.validates import validate_email_or_phone_number
 
 User = get_user_model()
@@ -56,7 +58,6 @@ class RegisterCreateAPIView(CreateAPIView):
             return CustomResponse.error_response(message='Kod saqlashda xatolik.')
         user = serializer.save()
         user = UserFullDataSerializer(user).data
-
 
         if contact_type == UserContactTypeChoices.EMAIL:
             try:
@@ -100,37 +101,10 @@ class LoginAPIView(APIView):
         if not user.check_password(password):
             return CustomResponse.error_response(message="Parol noto'g'ri", code=HTTP_401_UNAUTHORIZED)
 
-        code = generate_code()
-        try:
-            SmsCode.create_for_contact(contact=contact,
-                                       code=code,
-                                       _type=SmsCodeTypeChoices.LOGIN)
-        except Exception as e:
-            return CustomResponse.error_response(
-                message='Kod saqlashda xatolik'
-            )
-
-        contact_type = validate_email_or_phone_number(contact)
-
-        if contact_type == UserContactTypeChoices.EMAIL:
-            try:
-                send_verification_code(email=contact, code=code)
-            except Exception as e:
-                return CustomResponse.error_response(
-                    message='Kod yuborishda xatolik yuz berdi.'
-                )
-        else:
-            phone = contact.lstrip('+')
-            send_code = EskizUZ.send_sms_phone_number(phone_number=phone, code=code)
-            if not send_code['success']:
-                return CustomResponse.error_response(
-                    message=send_code['message'],
-                    data=send_code['data']
-                )
-        user = UserFullDataSerializer(user).data
+        token = get_tokens_for_user(user)
         return CustomResponse.success_response(
-            message='Kod muvaffaqiyatli yuborildi',
-            data=user
+            message="Login muvaqqiyatli yakunlandi",
+            data={"user": UserFullDataSerializer(user).data, "token": token}, code=status.HTTP_200_OK
         )
 
 
@@ -138,34 +112,33 @@ class UserLogoutAPIView(APIView):
     """
     Akkauntdan chiqish
     """
-    serializer_class = LogoutSerializer
     permission_classes = [IsAuthenticated]
 
-    def post(self, request):
-        serializer = self.serializer_class(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        refresh_token = serializer.validated_data.get('refresh_token').split()
+    def get(self, request):
         try:
-            token = RefreshToken(refresh_token)
-            token.blacklist()
-
-            return CustomResponse.success_response(
-                message='Chiqish muvaffaqiyatli bajarildi'
-            )
-        except TokenError:
+            token_blacklist(request)
+        except Exception as e:
             return CustomResponse.error_response(
-                message='Refresh token yaroqsiz',
-                code=HTTP_400_BAD_REQUEST
+                message=f"Xatolik yuz berdi {str(e)}"
             )
-
+        CustomResponse.success_response(
+            message="Chiqish muvaffaqiyatli bajarildi. Shu foydalanuvchining barcha tokenlari endi ishlamaydi."
+        )
 
 class UserDeleteAccount(APIView):
     """
     Akkauntni butunlay o'chirish
     """
     permission_classes = [IsAuthenticated]
-    def post(self, request):
-       request.user.is_active = False
-       return CustomResponse.success_response(
-           message="Muvaffaqiyatli o'chirildi"
-       )
+
+    def get(self, request):
+        try:
+            token_blacklist(request)
+        except Exception as e:
+            return CustomResponse.error_response(
+                message=f"Xatolik yuz berdi, {str(e)}"
+            )
+        request.user.is_active = False
+        return CustomResponse.success_response(
+            message="Muvaffaqiyatli o'chirildi"
+        )

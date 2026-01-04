@@ -12,11 +12,6 @@ class StoryChoices(models.TextChoices):
     VIDEO = 'video', 'Video'
 
 
-class PubChoices(models.TextChoices):
-    IMAGE = 'reels', 'Reels'
-    VIDEO = 'video', 'Video'
-
-
 class FollowChoices(models.TextChoices):
     FOLLOW = 'follow', 'Follow'
     UNFOLLOW = 'unfollow', 'Unfollow'

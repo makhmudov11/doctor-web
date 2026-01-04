@@ -9,7 +9,7 @@ from rest_framework.response import Response
 from rest_framework.status import HTTP_201_CREATED
 from rest_framework.views import APIView
 
-from apps.profile.models import DoctorProfile, Story, StoryView
+from apps.profile.models import Story, StoryView
 from apps.profile.permission import IsDoctor, DoctorStoryPermission
 from apps.profile.serializers.stories import UserStoryCreateSerializer, UserActiveStorySerializer, \
     UserStoryListSerializer
@@ -146,32 +146,36 @@ class UserStoryViewedAllListAPIView(ListAPIView):
     permission_classes = [IsDoctor]
     serializer_class = UserStoryListSerializer
 
-    def get_queryset(self):
-        profile = RoleValidate.get_profile_user(self.request)
-        story_id = self.request.GET.get('story_id', None)
-        if story_id is None or not isinstance(story_id, int):
-            raise CustomResponse.error_response(
-                message='Story id kelishi shart'
-            )
+    def get_queryset(self, story_id, profile):
         qs = StoryView.objects.filter(
             story__id=story_id,
             story__profile=profile,
             story__status=False
         )
-        if not qs.exists():
-            raise CustomResponse.error_response(
-                message="Ko'rilganlar topilmadi"
-            )
         return qs
 
     def list(self, request, *args, **kwargs):
-        qs = self.get_queryset()
-        story_id = kwargs.get('story_id')
+        profile = RoleValidate.get_profile_user(request)
+        story_id = kwargs.get('story_id', None)
+        if story_id is None:
+            return CustomResponse.error_response(
+                message='Story id kelishi shart'
+            )
+        try:
+            story_id = int(story_id)
+        except ValueError:
+            return CustomResponse.error_response(message='Story id butun son bo\'lishi kerak')
+
         try:
             story = Story.objects.get(id=story_id)
         except Story.DoesNotExist:
             return CustomResponse.error_response(
                 message="Storis topilmadi"
+            )
+        qs = self.get_queryset(story_id=story_id, profile=profile)
+        if not qs.exists():
+            return CustomResponse.error_response(
+                message="Ko'rilganlar topilmadi"
             )
         story_serializer = UserStoryListSerializer(instance=story,
                                                    context={'request': request})
@@ -179,7 +183,7 @@ class UserStoryViewedAllListAPIView(ListAPIView):
                                                         context={'request': request})
         return CustomResponse.success_response(
             data={
-                "story" : story_serializer.data,
-                "story_view" : story_viewed_serializer.data
+                "story": story_serializer.data,
+                "story_view": story_viewed_serializer.data
             }
         )

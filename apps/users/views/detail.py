@@ -3,6 +3,9 @@ from rest_framework.generics import RetrieveUpdateAPIView, RetrieveAPIView, Upda
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
+from rest_framework_simplejwt.exceptions import TokenError
+from rest_framework_simplejwt.token_blacklist.models import OutstandingToken
+from rest_framework_simplejwt.tokens import RefreshToken
 
 from apps.users.choices import UserContactTypeChoices
 from apps.users.models import SmsCodeTypeChoices, SmsCode
@@ -14,7 +17,7 @@ from apps.utils.CustomResponse import CustomResponse
 from apps.utils.eskiz import EskizUZ
 from apps.utils.generate_code import generate_code
 from apps.utils.role_validate import RoleValidate
-from apps.utils.token_claim import get_tokens_for_user
+from apps.utils.token_claim import get_tokens_for_user, token_blacklist
 from apps.utils.validates import validate_email_or_phone_number
 
 
@@ -126,7 +129,7 @@ class UserSelectRoleRetrieveAPIView(APIView):
         return CustomResponse.success_response(
             data={
                 "roles": user.roles,
-                "active_role": request.auth["active_role"]
+                "active_role": request.user.active_role
             }
         )
 
@@ -145,8 +148,6 @@ class UserChangeRoleAPIView(APIView):
         print(role)
 
         user = request.user
-        print(user.active_role)
-        print(RoleValidate.get_token_active_role(request))
         if role == RoleValidate.get_token_active_role(request):
             return CustomResponse.error_response(
                 message=f"Hozirgi rolingiz {user.active_role}, yana shunga o'zgartirib bo'lmaydi"
@@ -155,7 +156,12 @@ class UserChangeRoleAPIView(APIView):
             return CustomResponse.error_response(
                 message=f"Userda {role} ro'li mavjud emas"
             )
-
+        try:
+            token_blacklist(request)
+        except Exception as e:
+            return CustomResponse.error_response(
+                message=f"Xatolik yuz berdi, {str(e)}"
+            )
         user.active_role = role
         user.save(update_fields=['active_role'])
         token = get_tokens_for_user(user)

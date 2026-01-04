@@ -66,7 +66,8 @@ class RegisterSerializer(serializers.ModelSerializer):
             contact=contact,
             birth_date=validated_data.get('birth_date'),
             contact_type=validated_data.get('contact_type'),
-            gender=validated_data.get('gender')
+            gender=validated_data.get('gender'),
+            passport=validated_data.get('passport')
         )
         user.set_password(validated_data.get('password'))
         user.save()
