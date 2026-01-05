@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-01-03 22:18+0500\n"
+"POT-Creation-Date: 2026-01-06 00:03+0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,6 +17,67 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
+
+#: .\apps\banner\views.py:28 .\apps\banner\views.py:54
+msgid "Banner topilmadi"
+msgstr ""
+
+#: .\apps\banner\views.py:47
+msgid "Banner id topilmadi"
+msgstr ""
+
+#: .\apps\order\serializers\add_patient.py:30
+msgid "Ism va familiya kiritilishi shart"
+msgstr ""
+
+#: .\apps\order\serializers\add_patient.py:33
+msgid "Tug'ilgan sana kelajakda bo'lishi mumkin emas"
+msgstr ""
+
+#: .\apps\order\views\add_patient.py:25
+msgid "Bemor muvaffaqiyatli qo'shildi"
+msgstr ""
+
+#: .\apps\service\views.py:28
+msgid "Servislar topilmadi"
+msgstr ""
+
+#: .\apps\service\views.py:46
+msgid "Servis id topilmadi"
+msgstr ""
+
+#: .\apps\service\views.py:53
+msgid "Servis topilmadi"
+msgstr ""
+
+#: .\apps\super_admin\views\profile.py:36
+msgid "Shifokor id kelishi shart"
+msgstr ""
+
+#: .\apps\super_admin\views\profile.py:42
+msgid "Shifokor profili topilmadi"
+msgstr ""
+
+#: .\apps\super_admin\views\profile.py:67
+msgid "Bemor id kelishi shart"
+msgstr ""
+
+#: .\apps\super_admin\views\profile.py:73
+msgid "Bemor profili topilmadi"
+msgstr ""
+
+#: .\apps\super_admin\views\users.py:54
+msgid "Username va password kiritilishi shart"
+msgstr ""
+
+#: .\apps\super_admin\views\users.py:63
+msgid "Siz admin emassiz"
+msgstr ""
+
+#: .\apps\super_admin\views\users.py:64
+msgid "Username yoki parol noto‘g‘ri"
+msgstr ""
+
 #: .\apps\users\choices.py:5
 msgid "Shifokor"
 msgstr ""
@@ -49,90 +110,166 @@ msgstr ""
 msgid "Menejer"
 msgstr ""
 
-#: .\apps\video\models.py:14
+#: .\apps\utils\BaseClass.py:19
+msgid "Registratsiya muvaffaqiyatli bajarildi, foydalanuvchi yaratildi"
+msgstr ""
+
+#: .\apps\utils\BaseClass.py:25
+msgid "Parol o'zgartirish uchun kod tasdiqlandi"
+msgstr ""
+
+#: .\apps\utils\BaseClass.py:32
+msgid "Kod tasdiqlandi"
+msgstr ""
+
+#: .\apps\utils\BaseClass.py:36
+msgid "Xabar turi aniqlanmadi"
+msgstr ""
+
+#: .\apps\utils\custom_permission.py:13
+msgid "Sizga bu obyektga kirish huquqi yo‘q"
+msgstr ""
+
+#: .\apps\utils\custom_permission.py:20
+msgid "Foydalanuvchi autentifikatsiyadan o‘tmagan"
+msgstr ""
+
+#: .\apps\video\models.py:12
+msgid "Content egasi"
+msgstr ""
+
+#: .\apps\video\models.py:15
 msgid "content manzili"
 msgstr ""
 
-#: .\apps\video\models.py:17
-msgid "content haqida malumot"
-msgstr ""
-
 #: .\apps\video\models.py:18
-msgid "content oblojkasi"
+msgid "Content turi"
 msgstr ""
 
 #: .\apps\video\models.py:19
-msgid "content davomiyligi"
+msgid "content haqida malumot"
 msgstr ""
 
 #: .\apps\video\models.py:20
-msgid "korishlar soni"
+msgid "content oblojkasi"
 msgstr ""
 
 #: .\apps\video\models.py:21
-msgid "likelar soni"
+msgid "content davomiyligi"
 msgstr ""
 
 #: .\apps\video\models.py:22
-msgid "dislikelar soni"
+msgid "korishlar soni"
 msgstr ""
 
 #: .\apps\video\models.py:23
+msgid "likelar soni"
+msgstr ""
+
+#: .\apps\video\models.py:24
+msgid "dislikelar soni"
+msgstr ""
+
+#: .\apps\video\models.py:25
 msgid "jami izohlar soni"
 msgstr ""
 
-#: .\apps\video\models.py:26
+#: .\apps\video\models.py:30
 msgid "video_reels"
 msgstr ""
 
-#: .\apps\video\models.py:27
+#: .\apps\video\models.py:31
 msgid "Video / Reel"
 msgstr ""
 
-#: .\apps\video\models.py:28
+#: .\apps\video\models.py:32
 msgid "Video / Reels"
 msgstr ""
 
-#: .\apps\video\models.py:44
+#: .\apps\video\models.py:54
 msgid "video_reels_view"
 msgstr ""
 
-#: .\apps\video\models.py:45
+#: .\apps\video\models.py:55
 msgid "Video / Reel/ View"
 msgstr ""
 
-#: .\apps\video\models.py:46
+#: .\apps\video\models.py:56
 msgid "Video / Reels/ View"
 msgstr ""
 
-#: .\apps\video\models.py:65
+#: .\apps\video\models.py:75
 msgid "video_reaction"
 msgstr ""
 
-#: .\apps\video\models.py:66 .\apps\video\models.py:67
+#: .\apps\video\models.py:76 .\apps\video\models.py:77
 msgid "Video Reaction"
 msgstr ""
 
-#: .\apps\video\models.py:90
+#: .\apps\video\models.py:101
 msgid "comment"
 msgstr ""
 
-#: .\apps\video\models.py:91
+#: .\apps\video\models.py:102
 msgid "Comment"
 msgstr ""
 
-#: .\apps\video\models.py:92
+#: .\apps\video\models.py:103
 msgid "Comments"
 msgstr ""
 
-#: .\apps\video\models.py:112
+#: .\apps\video\models.py:121
 msgid "comment_reaction"
 msgstr ""
 
-#: .\apps\video\models.py:113
+#: .\apps\video\models.py:122
 msgid "Comment Reaction"
 msgstr ""
 
-#: .\apps\video\models.py:114
+#: .\apps\video\models.py:123
 msgid "Comment Reactions"
+msgstr ""
+
+#: .\apps\video\serializers.py:37
+msgid "Comment kelishi shart"
+msgstr ""
+
+#: .\apps\video\views.py:71 .\apps\video\views.py:188
+msgid "Video id kelishi shart"
+msgstr ""
+
+#: .\apps\video\views.py:76 .\apps\video\views.py:135 .\apps\video\views.py:223
+msgid "Video topilmadi"
+msgstr ""
+
+#: .\apps\video\views.py:81
+msgid "Video muvaffaqiyatli ochirildi"
+msgstr ""
+
+#: .\apps\video\views.py:128
+msgid "Reaksiya turi xato"
+msgstr ""
+
+#: .\apps\video\views.py:151
+msgid "Reaksiya o‘chirildi"
+msgstr ""
+
+#: .\apps\video\views.py:159
+msgid "Reaksiya yangilandi"
+msgstr ""
+
+#: .\apps\video\views.py:170
+msgid "Reaksiya qo‘shildi"
+msgstr ""
+
+#: .\apps\video\views.py:255 .\apps\video\views.py:341
+msgid "Comment topilmadi"
+msgstr ""
+
+#: .\apps\video\views.py:275 .\apps\video\views.py:314
+msgid "Comment id kelishi shart"
+msgstr ""
+
+#: .\apps\video\views.py:297
+msgid "Comment muvaffaqiyatli yaratildi"
 msgstr ""
