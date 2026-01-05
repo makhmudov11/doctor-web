@@ -9,7 +9,7 @@ from apps.super_admin.filters.users import UserListFilter
 from apps.super_admin.paginations.users import AdminUserListPagination
 from apps.super_admin.permissions.users import AdminPermission
 from apps.super_admin.serializers.users import AdminUserListSerializer, AdminUserCreateSerializer, \
-    AdminUserRetrieveUpdateDestroySerializer
+    AdminUserRetrieveUpdateDestroySerializer, AdminLoginSerializer
 from apps.utils.CustomResponse import CustomResponse
 from apps.utils.token_claim import get_tokens_for_user
 
@@ -45,7 +45,7 @@ class AdminLoginAPIView(APIView):
     """
     Faqat is_staff=True bo'lgan userlar uchun admin login.
     """
-
+    serializer_class = AdminLoginSerializer
     def post(self, request):
         username = request.data.get('username')
         password = request.data.get('password')

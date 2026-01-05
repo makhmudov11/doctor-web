@@ -59,5 +59,5 @@ class BannerDetailAPIView(APIView):
         if serializer.get('image'):
             serializer['image'] = request.build_absolute_uri(banner.image.url)
         return CustomResponse.success_response(
-            data=serializer
+            data=serializer.data
         )
