@@ -116,6 +116,9 @@ class ReelsCreateAPIView(CreateAPIView):
 
 
 class VideoReactionAPIView(APIView):
+    """
+    Videoga like dislike bosish
+    """
     permission_classes = [UserProfilePermission]
 
     def post(self, request, video_id):
@@ -208,6 +211,9 @@ class VideoCommentCreateAPIView(APIView):
 
 
 class VideoCommentListAPIView(APIView):
+    """
+    Videoning commentlarini listini olish
+    """
     serializer_class = CommentSerializer
     permission_classes = []
 
@@ -227,6 +233,9 @@ class VideoCommentListAPIView(APIView):
 
 
 class DeleteVideoReelsCommentDestroyAPIView(DestroyAPIView):
+    """
+    Videoga yozilgan commentni o'chirish
+    """
     permission_classes = [DeleteVideoReelsCommentPermission]
 
     def get_object(self):
@@ -254,6 +263,9 @@ class DeleteVideoReelsCommentDestroyAPIView(DestroyAPIView):
 
 
 class VideoReelsCommentReplyAPIView(APIView):
+    """
+    Video va reelsga yozilgan commentga reply qilish
+    """
     serializer_class = VideoCommentReplySerializer
     permission_classes = [VideoReelsCommentReplyCreatePermission]
 
@@ -289,6 +301,9 @@ class VideoReelsCommentReplyAPIView(APIView):
 
 
 class VideoReelsCommentReplyListAPIView(ListAPIView):
+    """
+    Videodagi commentlarga reply qilinga commentlar listini olish
+    """
     serializer_class = VideoReelsCommentNestedSerializer
     permission_classes = [IsAuthenticated]
 
@@ -305,6 +320,9 @@ class VideoReelsCommentReplyListAPIView(ListAPIView):
 
 
 class CommentReactionAPIView(APIView):
+    """
+    Har qanday parent comment yoki reply commentlarga like va dislike qoldirish
+    """
     permission_classes = [UserProfilePermission]
     serializer_class = CommentReactionSerializer
 
@@ -361,6 +379,9 @@ class CommentReactionAPIView(APIView):
 
 
 class VideoAllListAPIView(ListAPIView):
+    """
+    Barcha videolar listi
+    """
     serializer_class = VideoAllListSerializer
     permission_classes = [IsAuthenticated]
 
@@ -377,6 +398,9 @@ class VideoAllListAPIView(ListAPIView):
 
 
 class UserVideoListAPIView(ListAPIView):
+    """
+    Usega tegishli videolar list
+    """
     serializer_class = VideoAllListSerializer
     permission_classes = [UserAllVideoReelsPermission]
 
@@ -390,6 +414,9 @@ class UserVideoListAPIView(ListAPIView):
 
 
 class ReelsAllListAPIView(ListAPIView):
+    """
+    Barcha reelslar listi
+    """
     serializer_class = VideoAllListSerializer
     permission_classes = [IsAuthenticated]
 
@@ -406,6 +433,9 @@ class ReelsAllListAPIView(ListAPIView):
 
 
 class UserReelsListAPIView(ListAPIView):
+    """
+    Userga tegishli reelslar listi
+    """
     serializer_class = VideoAllListSerializer
     permission_classes = [UserAllVideoReelsPermission]
 
@@ -419,6 +449,9 @@ class UserReelsListAPIView(ListAPIView):
 
 
 class VideoReelsAddViewAPIView(APIView):
+    """
+    Video yoki reels ko'rish
+    """
     permission_classes = [IsAuthenticated]
 
     def post(self, request, content_id):
