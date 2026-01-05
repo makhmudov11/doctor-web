@@ -24,24 +24,28 @@ from rest_framework_simplejwt.views import TokenRefreshView
 import config.settings
 from apps.utils.swagger.swagger_urls import SPECTACULAR_URL
 
+
 def home(request):
     return HttpResponse("Home page")
+
+
 TOKEN_REFRESH = [
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh')
 ]
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('super-admin/', include('apps.super_admin.urls', namespace='super_admin')),
-    path('users/', include('apps.users.urls', namespace='users')),
-    path('', home, name='home'),
-    path('profile/', include('apps.profile.urls', namespace='profile')),
-    path('content/', include('apps.video.urls', namespace='content')),
+                  path('', home, name='home'),
+                  path('admin/', admin.site.urls),
+                  path('super-admin/', include('apps.super_admin.urls', namespace='super_admin')),
+                  path('users/', include('apps.users.urls', namespace='users')),
+                  path('banner/', include('apps.banner.urls', namespace='banner')),
+                  path('service/', include('apps.service.urls', namespace='service')),
+                  path('profile/', include('apps.profile.urls', namespace='profile')),
+                  path('content/', include('apps.video.urls', namespace='content')),
+                  path('order/', include('apps.order.urls', namespace='order')),
 
-] + SPECTACULAR_URL + TOKEN_REFRESH
+              ] + SPECTACULAR_URL + TOKEN_REFRESH
 
 if config.settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
-
-

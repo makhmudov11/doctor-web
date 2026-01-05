@@ -145,7 +145,6 @@ class UserChangeRoleAPIView(APIView):
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
         role = serializer.validated_data.get('role')
-        print(role)
 
         user = request.user
         if role == RoleValidate.get_token_active_role(request):

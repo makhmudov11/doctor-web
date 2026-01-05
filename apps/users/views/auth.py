@@ -18,6 +18,7 @@ from apps.users.tasks import send_verification_code
 from apps.utils.CustomResponse import CustomResponse
 from apps.utils.eskiz import EskizUZ
 from apps.utils.generate_code import generate_code
+from apps.utils.role_validate import RoleValidate
 from apps.utils.token_claim import get_tokens_for_user, token_blacklist
 from apps.utils.validates import validate_email_or_phone_number
 

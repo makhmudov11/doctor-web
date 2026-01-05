@@ -1,11 +1,15 @@
 from rest_framework.filters import SearchFilter, OrderingFilter
-from rest_framework.generics import ListAPIView, CreateAPIView, RetrieveUpdateDestroyAPIView
+from rest_framework.generics import ListAPIView, RetrieveAPIView
 from django_filters.rest_framework import DjangoFilterBackend
+
+from apps.profile.serializers.profiles import DoctorProfileSerializer
 from apps.super_admin.filters.profile import AdminDoctorProfileListFilter, AdminPatientProfileListFilter
-from apps.super_admin.serializers.profile import AdminDoctorProfileListSerializer, AdminDoctorProfileCreateSerializer, AdminDoctorProfileRetrieveUpdateDestroySerializer, AdminPatientProfileCreateSerializer, AdminPatientProfileListSerializer, AdminPatientProfileRetrieveUpdateDestroySerializer
+from apps.super_admin.serializers.profile import AdminDoctorProfileListSerializer, AdminPatientProfileListSerializer
 from apps.super_admin.permissions.users import AdminPermission
 from apps.profile.models import DoctorProfile, PatientProfile
 from apps.super_admin.paginations.profile import AdminListPagination
+from apps.utils.CustomResponse import CustomResponse
+from django.utils.translation import gettext_lazy as _
 
 
 class AdminDoctorProfileListAPIView(ListAPIView):
@@ -21,17 +25,22 @@ class AdminDoctorProfileListAPIView(ListAPIView):
     ordering = ['id']
 
 
-class AdminDoctorProfileCreateAPIView(CreateAPIView):
-    serializer_class = AdminDoctorProfileCreateSerializer
+class AdminDoctorProfileRetrieveAPIView(RetrieveAPIView):
+    serializer_class = DoctorProfileSerializer
     permission_classes = [AdminPermission]
-    queryset = DoctorProfile.objects.all()
 
-
-class AdminDoctorProfileRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
-    serializer_class = AdminDoctorProfileRetrieveUpdateDestroySerializer
-    permission_classes = [AdminPermission]
-    queryset = DoctorProfile.objects.all()
-
+    def get_queryset(self):
+        public_id = self.kwargs.get('public_id', None)
+        if public_id is None:
+            return CustomResponse.error_response(
+                message=_("Shifokor id kelishi shart")
+            )
+        try:
+            return DoctorProfile.objects.get(id=public_id, status=True)
+        except DoctorProfile.DoesNotExist:
+            return CustomResponse.error_response(
+                message=_("Shifokor profili topilmadi")
+            )
 
 
 class AdminPatientProfileListAPIView(ListAPIView):
@@ -47,13 +56,19 @@ class AdminPatientProfileListAPIView(ListAPIView):
     ordering = ['id']
 
 
-class AdminPatientProfileCreateAPIView(CreateAPIView):
-    serializer_class = AdminPatientProfileCreateSerializer
-    permission_classes = [AdminPermission]
+class AdminPatientProfileRetrieveAPIView(RetrieveAPIView):
     queryset = PatientProfile.objects.all()
-
-
-class AdminPatientProfileRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
-    serializer_class = AdminPatientProfileRetrieveUpdateDestroySerializer
     permission_classes = [AdminPermission]
-    queryset = PatientProfile.objects.all()
+
+    def get_queryset(self):
+        public_id = self.kwargs.get('public_id', None)
+        if public_id is None:
+            return CustomResponse.error_response(
+                message=_("Bemor id kelishi shart")
+            )
+        try:
+            return PatientProfile.objects.get(id=public_id, status=True)
+        except PatientProfile.DoesNotExist:
+            return CustomResponse.error_response(
+                message=_("Bemor profili topilmadi")
+            )

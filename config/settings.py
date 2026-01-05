@@ -35,6 +35,9 @@ CUSTOM_APPS = [
     'apps.users',
     'apps.profile',
     'apps.video',
+    'apps.order',
+    'apps.banner',
+    'apps.service',
 ]
 
 CUSTOM_INSTALLED_APPS = [
@@ -169,8 +172,8 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=30),
-    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
+    "ACCESS_TOKEN_LIFETIME": timedelta(days=1),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=365),
     'AUTH_HEADER_TYPES': ('Bearer',),
     "ROTATE_REFRESH_TOKENS": True,
     "BLACKLIST_AFTER_ROTATION": True,

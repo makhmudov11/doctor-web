@@ -1,16 +1,20 @@
-from django.contrib.auth import get_user_model
+from django.contrib.auth import get_user_model, authenticate
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework.authentication import SessionAuthentication
 from rest_framework.generics import ListAPIView, CreateAPIView, RetrieveUpdateDestroyAPIView
-from rest_framework import filters
+from rest_framework import filters, status
+from rest_framework.views import APIView
+from django.utils.translation import gettext_lazy as _
 
 from apps.super_admin.filters.users import UserListFilter
 from apps.super_admin.paginations.users import AdminUserListPagination
 from apps.super_admin.permissions.users import AdminPermission
 from apps.super_admin.serializers.users import AdminUserListSerializer, AdminUserCreateSerializer, \
     AdminUserRetrieveUpdateDestroySerializer
+from apps.utils.CustomResponse import CustomResponse
+from apps.utils.token_claim import get_tokens_for_user
 
 User = get_user_model()
+
 
 class AdminUserListAPIView(ListAPIView):
     permission_classes = [AdminPermission]
@@ -25,7 +29,6 @@ class AdminUserListAPIView(ListAPIView):
     ordering = ['-created_at']
 
 
-
 class AdminUserCreateAPIView(CreateAPIView):
     serializer_class = AdminUserCreateSerializer
     permission_classes = [AdminPermission]
@@ -38,3 +41,25 @@ class AdminUserRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
     queryset = User.objects.all()
 
 
+class AdminLoginAPIView(APIView):
+    """
+    Faqat is_staff=True bo'lgan userlar uchun admin login.
+    """
+
+    def post(self, request):
+        username = request.data.get('username')
+        password = request.data.get('password')
+
+        if not username or not password:
+            return CustomResponse.error_response(message=_("Username va password kiritilishi shart"),
+                                                 code=status.HTTP_400_BAD_REQUEST)
+
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            if user.is_staff:
+                token = get_tokens_for_user(user)
+                return CustomResponse.success_response(data=token)
+            else:
+                return CustomResponse.error_response(message=_("Siz admin emassiz"), code=status.HTTP_403_FORBIDDEN)
+        return CustomResponse.error_response(message=_("Username yoki parol noto‘g‘ri"),
+                                             code=status.HTTP_401_UNAUTHORIZED)

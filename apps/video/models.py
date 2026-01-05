@@ -17,7 +17,7 @@ class VideoReels(CreateUpdateBaseModel):
                                     default=VideoReelsTypeChoices.REELS, db_index=True,
                                     verbose_name=_('Content turi'))
     description = models.TextField(null=True, verbose_name=_('content haqida malumot'), db_index=True)
-    thumbnail = models.ImageField(null=True, verbose_name=_('content oblojkasi'))
+    thumbnail = models.ImageField(null=True, verbose_name=_('content oblojkasi'), upload_to='video_reels/thumbnail/')
     duration = models.PositiveIntegerField(default=0, verbose_name=_('content davomiyligi'))
     views_count = models.PositiveIntegerField(default=0, verbose_name=_('korishlar soni'))
     likes_count = models.PositiveIntegerField(default=0, verbose_name=_('likelar soni'))
