@@ -46,6 +46,7 @@ CUSTOM_INSTALLED_APPS = [
     'drf_spectacular',
     'background_task',
     'rest_framework_simplejwt.token_blacklist',
+    'corsheaders',
 
 ]
 
@@ -59,6 +60,7 @@ INSTALLED_APPS = [
                  ] + CUSTOM_INSTALLED_APPS + CUSTOM_APPS
 
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.locale.LocaleMiddleware',
@@ -217,3 +219,8 @@ SOCIAL_AUTH_KEYS = {
     "REDIRECT_URI": decouple.config('REDIRECT_URI')
 
 }
+
+CORS_ALLOWED_ORIGINS = [
+    'https://api.sinon.uz'
+]
+CORS_ALLOW_CREDENTIALS = False
