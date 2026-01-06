@@ -73,7 +73,7 @@ class AdminPatientProfileRetrieveAPIView(RetrieveAPIView):
     lookup_field = 'public_id'
 
     def get_queryset(self):
-        return DoctorProfile.objects.filter(status=True, public_id=self.kwargs.get('public_id')).first()
+        return PatientProfile.objects.filter(status=True, public_id=self.kwargs.get('public_id')).first()
 
     def retrieve(self, request, *args, **kwargs):
         public_id = kwargs.get('public_id', None)
