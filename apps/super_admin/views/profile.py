@@ -2,7 +2,7 @@ from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.generics import ListAPIView, RetrieveAPIView
 from django_filters.rest_framework import DjangoFilterBackend
 
-from apps.profile.serializers.profiles import DoctorProfileSerializer
+from apps.profile.serializers.profiles import DoctorProfileSerializer, PatientProfileSerializer
 from apps.super_admin.filters.profile import AdminDoctorProfileListFilter, AdminPatientProfileListFilter
 from apps.super_admin.serializers.profile import AdminDoctorProfileListSerializer, AdminPatientProfileListSerializer
 from apps.super_admin.permissions.users import AdminPermission
@@ -59,6 +59,7 @@ class AdminPatientProfileListAPIView(ListAPIView):
 class AdminPatientProfileRetrieveAPIView(RetrieveAPIView):
     queryset = PatientProfile.objects.all()
     permission_classes = [AdminPermission]
+    serializer_class = PatientProfileSerializer
 
     def get_queryset(self):
         public_id = self.kwargs.get('public_id', None)

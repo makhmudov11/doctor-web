@@ -2,6 +2,7 @@ from django.contrib.auth import get_user_model
 from rest_framework import serializers
 
 from apps.utils.CustomValidationError import CustomValidationError
+from apps.utils.base_models import GenderChoices
 from apps.utils.validates import validate_email_or_phone_number
 
 User = get_user_model()
@@ -21,6 +22,11 @@ class AdminUserListSerializer(serializers.ModelSerializer):
 
 
 class AdminUserCreateSerializer(serializers.ModelSerializer):
+    gender = serializers.ChoiceField(choices=GenderChoices.choices)
+    birth_date = serializers.DateField(
+        input_formats=["%d.%m.%Y", "%d/%m/%Y"],
+        required=True
+    )
     class Meta:
         model = User
         fields = [
@@ -34,7 +40,8 @@ class AdminUserCreateSerializer(serializers.ModelSerializer):
             "created_at": {"read_only": True},
             "updated_at": {"read_only": True},
             "image": {"allow_null": True, "required": False},
-            "status": {"required": False},
+            "status": {"required": True},
+            "full_name": {"required": True},
         }
 
     def create(self, validated_data):

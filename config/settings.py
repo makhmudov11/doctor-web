@@ -194,6 +194,7 @@ SPECTACULAR_SETTINGS = {
     'DESCRIPTION': 'API docs',
     'VERSION': '1.0.0',
     'COMPONENT_SPLIT_REQUEST': True,
+
 }
 
 # APPLE KEY
@@ -224,3 +225,5 @@ CORS_ALLOWED_ORIGINS = [
     'https://api.sinon.uz'
 ]
 CORS_ALLOW_CREDENTIALS = False
+
+APPEND_SLASH = True

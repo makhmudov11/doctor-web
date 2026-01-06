@@ -1,7 +1,9 @@
 from django.contrib.auth import get_user_model, authenticate
+from django.utils import timezone
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.generics import ListAPIView, CreateAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework import filters, status
+from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.views import APIView
 from django.utils.translation import gettext_lazy as _
 
@@ -34,12 +36,25 @@ class AdminUserCreateAPIView(CreateAPIView):
     permission_classes = [AdminPermission]
     queryset = User.objects.all()
 
+    parser_classes = [MultiPartParser, FormParser]
+
 
 class AdminUserRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
     serializer_class = AdminUserRetrieveUpdateDestroySerializer
     permission_classes = [AdminPermission]
     queryset = User.objects.all()
+    lookup_field = 'pk'
 
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        instance.is_active = False
+        instance.deleted_at = timezone.now()
+        instance.save(update_fields=['is_active', 'deleted_at'])
+
+        return CustomResponse.success_response(
+            message="Foydalanuvchi muvaffaqiyatli o'chirildi",
+            code=status.HTTP_204_NO_CONTENT
+        )
 
 class AdminLoginAPIView(APIView):
     """

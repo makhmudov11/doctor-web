@@ -10,7 +10,7 @@ class Banner(CreateUpdateBaseModel):
     image = models.ImageField(upload_to='banner/', null=True)
     title = models.CharField(max_length=255, null=True, db_index=True)
     description = models.TextField(null=True, blank=True)
-    url = models.URLField(null=True, blank=True)
+    url = models.URLField(null=True, blank=True, default=None)
     _type = models.CharField(default=BannerChoices.ELON, choices=BannerChoices.choices, db_index=True)
     status = models.BooleanField(default=True, blank=True)
 
