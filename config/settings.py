@@ -222,9 +222,7 @@ SOCIAL_AUTH_KEYS = {
 
 }
 
-CORS_ALLOWED_ORIGINS = [
-    'https://api.sinon.uz'
-]
+CORS_ALLOWED_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = False
 
 APPEND_SLASH = True
