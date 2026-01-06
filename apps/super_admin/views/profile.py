@@ -8,6 +8,7 @@ from apps.super_admin.serializers.profile import AdminDoctorProfileListSerialize
 from apps.super_admin.permissions.users import AdminPermission
 from apps.profile.models import DoctorProfile, PatientProfile
 from apps.super_admin.paginations.profile import AdminListPagination
+from apps.users.serializers.user_detail import UserFullDataSerializer
 from apps.utils.CustomResponse import CustomResponse
 from django.utils.translation import gettext_lazy as _
 
@@ -46,7 +47,7 @@ class AdminDoctorProfileRetrieveAPIView(RetrieveAPIView):
 class AdminPatientProfileListAPIView(ListAPIView):
     serializer_class = AdminPatientProfileListSerializer
     permission_classes = [AdminPermission]
-    queryset = PatientProfile.objects.select_related("user")
+    queryset = PatientProfile.objects.all()
     pagination_class = AdminListPagination
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_fields = ['status']

@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from apps.profile.models import DoctorProfile, PatientProfile
-from apps.users.serializers.user_detail import UserListSerializer
+from apps.users.serializers.user_detail import UserListSerializer, UserFullDataSerializer
 
 
 class AdminDoctorProfileListSerializer(serializers.ModelSerializer):
@@ -18,7 +18,7 @@ class AdminDoctorProfileListSerializer(serializers.ModelSerializer):
 
 
 class AdminPatientProfileListSerializer(serializers.ModelSerializer):
-    user = UserListSerializer(read_only=True)
+    user = UserFullDataSerializer(read_only=True)
 
     class Meta:
         model = PatientProfile
