@@ -13,10 +13,12 @@ from apps.utils.CustomResponse import CustomResponse
 from apps.utils.eskiz import EskizUZ
 from apps.utils.generate_code import generate_code
 from apps.utils.validates import validate_email_or_phone_number
+from drf_spectacular.utils import extend_schema
 
 User = get_user_model()
 
 
+@extend_schema(summary='🔐hamma uchun')
 class VerifyCodeAPIView(APIView):
     """
     Kod tasdiqlash
@@ -63,7 +65,7 @@ class VerifyCodeAPIView(APIView):
             )
         return BaseVerifyCode.sms_code_type_response(user_code_obj, user)
 
-
+@extend_schema(summary='🔐 login qilgan hamma uchun')
 class ResendCode(APIView):
     """
     Kodni qaytadan yuborish

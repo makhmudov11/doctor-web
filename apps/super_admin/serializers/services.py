@@ -3,7 +3,7 @@ from dataclasses import field
 from rest_framework import serializers
 
 from apps.banner.models import Banner, BannerChoices
-from apps.service.models import Service
+from apps.service.models import Service, SocialNetwork
 
 
 class AdminBannerAllSerializer(serializers.ModelSerializer):
@@ -70,3 +70,9 @@ class AdminServiceAllSerializer(serializers.ModelSerializer):
     class Meta:
         model = Service
         fields = '__all__'
+
+
+class AdminSocialNetworkUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SocialNetwork
+        fields = ['title', 'description', 'link', 'image', 'status']

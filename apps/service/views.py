@@ -6,8 +6,9 @@ from rest_framework.views import APIView
 from apps.service.models import Service
 from apps.service.serializers import ServiceListSerializer
 from apps.utils.CustomResponse import CustomResponse
+from drf_spectacular.utils import extend_schema
 
-
+@extend_schema(summary='🔐 login qilgan hamma uchun')
 class ServiceListAPIView(ListAPIView):
     """
     Servislar listi
@@ -32,6 +33,7 @@ class ServiceListAPIView(ListAPIView):
         return CustomResponse.success_response(
             data=serializer.data
         )
+@extend_schema(summary='🔐 login qilgan hamma uchun')
 class ServiceDetailAPIView(APIView):
     """
     Servis detail

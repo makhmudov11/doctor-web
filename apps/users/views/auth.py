@@ -1,14 +1,10 @@
 from django.contrib.auth import get_user_model, logout
-from django.contrib.auth.hashers import make_password
-from django.db import transaction
+
 from rest_framework import status
 from rest_framework.generics import CreateAPIView
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.status import HTTP_400_BAD_REQUEST, HTTP_401_UNAUTHORIZED, HTTP_404_NOT_FOUND
+from rest_framework.status import HTTP_401_UNAUTHORIZED, HTTP_404_NOT_FOUND
 from rest_framework.views import APIView
-from rest_framework_simplejwt.exceptions import TokenError
-from rest_framework_simplejwt.token_blacklist.models import OutstandingToken
-from rest_framework_simplejwt.tokens import RefreshToken
 
 from apps.users.models import SmsCodeTypeChoices, UserContactTypeChoices, SmsCode
 from apps.users.serializers.auth import RegisterSerializer, LoginSerializer, LogoutSerializer
@@ -18,13 +14,13 @@ from apps.users.tasks import send_verification_code
 from apps.utils.CustomResponse import CustomResponse
 from apps.utils.eskiz import EskizUZ
 from apps.utils.generate_code import generate_code
-from apps.utils.role_validate import RoleValidate
 from apps.utils.token_claim import get_tokens_for_user, token_blacklist
-from apps.utils.validates import validate_email_or_phone_number
+from drf_spectacular.utils import extend_schema
 
 User = get_user_model()
 
 
+@extend_schema(summary='🔐 hamma uchun')
 class RegisterCreateAPIView(CreateAPIView):
     """
     Ro'yhatdan o'tish
@@ -81,7 +77,7 @@ class RegisterCreateAPIView(CreateAPIView):
             data=user
         )
 
-
+@extend_schema(summary='🔐 hamma uchun')
 class LoginAPIView(APIView):
     """
     Login qilish
@@ -108,7 +104,7 @@ class LoginAPIView(APIView):
             data={"user": UserFullDataSerializer(user).data, "token": token}, code=status.HTTP_200_OK
         )
 
-
+@extend_schema(summary='🔐 login qilgan hamma uchun')
 class UserLogoutAPIView(APIView):
     """
     Akkauntdan chiqish
@@ -126,6 +122,7 @@ class UserLogoutAPIView(APIView):
             message="Chiqish muvaffaqiyatli bajarildi. Shu foydalanuvchining barcha tokenlari endi ishlamaydi."
         )
 
+@extend_schema(summary='🔐 login qilgan hamma uchun')
 class UserDeleteAccount(APIView):
     """
     Akkauntni butunlay o'chirish

@@ -1,5 +1,6 @@
 from django.contrib.contenttypes.models import ContentType
 from django.db import transaction
+from drf_spectacular.utils import extend_schema
 from rest_framework import status
 from rest_framework.generics import ListAPIView, CreateAPIView
 from rest_framework.views import APIView
@@ -13,7 +14,7 @@ from apps.utils.CustomResponse import CustomResponse
 from apps.utils.CustomValidationError import CustomValidationError
 from apps.utils.role_validate import RoleValidate
 
-
+@extend_schema(summary='🔐 login qilgan hamma uchun')
 class UserFollowListAPIView(ListAPIView):
     """
     Userning follow qilgan userlar ro'yhatini olish
@@ -49,7 +50,7 @@ class UserFollowListAPIView(ListAPIView):
             }
         )
 
-
+@extend_schema(summary='🔐 login qilgan hamma uchun')
 class UserFollowCreateAPIView(CreateAPIView):
     """
     Follow qilish (follow yaratish, create)
@@ -104,7 +105,7 @@ class UserFollowCreateAPIView(CreateAPIView):
                 message=f'Malumot saqlashda xatolik: {str(e)}'
             )
 
-
+@extend_schema(summary='🔐 login qilgan hamma uchun')
 class UserUnfollowUserAPIView(APIView):
     """
     Follow qilingan bo'lsa followni qaytarib olish
@@ -153,7 +154,7 @@ class UserUnfollowUserAPIView(APIView):
                 code=status.HTTP_400_BAD_REQUEST
             )
 
-
+@extend_schema(summary='🔐 doctor uchun')
 class UserFollowerListAPIView(ListAPIView):
     """
     Userga follow qilganlar ro'yhati

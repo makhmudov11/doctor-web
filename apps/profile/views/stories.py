@@ -15,8 +15,9 @@ from apps.profile.serializers.stories import UserStoryCreateSerializer, UserActi
     UserStoryListSerializer
 from apps.utils.CustomResponse import CustomResponse
 from apps.utils.role_validate import RoleValidate
+from drf_spectacular.utils import extend_schema
 
-
+@extend_schema(summary='🔐 doctor uchun')
 class UserStoryCreateAPIView(CreateAPIView):
     """
     Storis yaratish
@@ -38,7 +39,7 @@ class UserStoryCreateAPIView(CreateAPIView):
         return CustomResponse.success_response(message='Storis muvaffaqiyatli yaratildi', data=full_data,
                                                code=HTTP_201_CREATED)
 
-
+@extend_schema(summary='🔐 doctor uchun')
 class UserActiveStoryListAPIView(ListAPIView):
     """
      Storylar olish
@@ -64,7 +65,7 @@ class UserActiveStoryListAPIView(ListAPIView):
         }, context={"request": request})
         return Response(serializer.data)
 
-
+@extend_schema(summary='🔐 login qilgan hamma uchun')
 class StoryMarkViewedAPIView(APIView):
     """
     Storis korish
@@ -107,7 +108,7 @@ class StoryMarkViewedAPIView(APIView):
                 message=f"Story saqlashda xatolik: {str(e)}"
             )
 
-
+@extend_schema(summary='🔐 doctor uchun')
 class UserStoryDeleteAPIView(DestroyAPIView):
     """
     Storisni ochirish
@@ -138,7 +139,7 @@ class UserStoryDeleteAPIView(DestroyAPIView):
             code=status.HTTP_204_NO_CONTENT
         )
 
-
+@extend_schema(summary='🔐 doctor uchun')
 class UserStoryViewedAllListAPIView(ListAPIView):
     """
     User storisini ko'rganlar royhati

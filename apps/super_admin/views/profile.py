@@ -1,3 +1,4 @@
+from drf_spectacular.utils import OpenApiParameter, extend_schema
 from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.generics import ListAPIView, RetrieveAPIView
 from django_filters.rest_framework import DjangoFilterBackend
@@ -11,6 +12,23 @@ from apps.super_admin.paginations.profile import AdminListPagination
 from apps.utils.CustomResponse import CustomResponse
 
 
+@extend_schema(
+    parameters=[
+        OpenApiParameter(
+            name='search',
+            description='public_id, full_name, username',
+            required=False,
+            type=str
+        ),
+        OpenApiParameter(
+            name='ordering',
+            description='created_at, updated_at, full_name',
+            required=False,
+            type=str
+        )
+    ],
+    summary='🔐 admin uchun'
+)
 class AdminDoctorProfileListAPIView(ListAPIView):
     serializer_class = AdminDoctorProfileListSerializer
     permission_classes = [AdminPermission]
@@ -19,11 +37,12 @@ class AdminDoctorProfileListAPIView(ListAPIView):
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_fields = ['is_private']
     filterset_class = AdminDoctorProfileListFilter
-    search_fields = ['username', 'user__full_name']
-    ordering_fields = ['created_at', 'updated_at', 'full_name']
+    search_fields = ['username', 'user__full_name', 'public_id']
+    ordering_fields = ['created_at', 'updated_at', 'user__full_name']
     ordering = ['id']
 
 
+@extend_schema(summary='🔐 admin uchun')
 class AdminDoctorProfileRetrieveAPIView(RetrieveAPIView):
     serializer_class = DoctorProfileSerializer
     permission_classes = [AdminPermission]
@@ -49,19 +68,36 @@ class AdminDoctorProfileRetrieveAPIView(RetrieveAPIView):
         )
 
 
+@extend_schema(
+    parameters=[
+        OpenApiParameter(
+            name='search',
+            description='public_id, full_name, slug',
+            required=False,
+            type=str
+        ),
+        OpenApiParameter(
+            name='ordering',
+            description='created_at, updated_at, full_name',
+            required=False,
+            type=str
+        )
+    ],
+    summary='🔐 admin uchun'
+)
 class AdminPatientProfileListAPIView(ListAPIView):
     serializer_class = AdminPatientProfileListSerializer
     permission_classes = [AdminPermission]
-    queryset = PatientProfile.objects.prefetch_related('patient_address')
+    queryset = PatientProfile.objects.select_related('user').prefetch_related('patient_address')
     pagination_class = AdminListPagination
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_fields = ['status']
     filterset_class = AdminPatientProfileListFilter
     search_fields = ['public_id', 'user__full_name', 'slug']
-    ordering_fields = ['created_at', 'updated_at', 'full_name']
+    ordering_fields = ['created_at', 'updated_at', 'user__full_name']
     ordering = ['id']
 
-
+@extend_schema(summary='🔐 admin uchun')
 class AdminPatientProfileRetrieveAPIView(RetrieveAPIView):
     permission_classes = [AdminPermission]
     serializer_class = AdminPatientProfileListSerializer

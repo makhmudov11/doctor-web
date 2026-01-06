@@ -1,3 +1,4 @@
+from drf_spectacular.utils import extend_schema
 from rest_framework import status
 from rest_framework.generics import CreateAPIView, ListAPIView
 from django.utils.translation import gettext_lazy as _
@@ -10,7 +11,7 @@ from apps.profile.permission import IsPatient
 from apps.utils.CustomResponse import CustomResponse
 from apps.utils.role_validate import RoleValidate
 
-
+@extend_schema(summary='🔐 bemor uchun')
 class AddPatientCreateAPIView(CreateAPIView):
     serializer_class = AddPatientCreateSerializer
     permission_classes = [IsPatient]
@@ -30,7 +31,7 @@ class AddPatientCreateAPIView(CreateAPIView):
             data=serializer,
             code=status.HTTP_201_CREATED
         )
-
+@extend_schema(summary='🔐 bemor uchun')
 class UserAddPatientListAPIView(ListAPIView):
     serializer_class = UserAddPatientListSerializer
     permission_classes = [IsPatient]

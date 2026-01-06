@@ -1,3 +1,4 @@
+from drf_spectacular.utils import extend_schema
 from rest_framework.generics import ListAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
@@ -7,7 +8,7 @@ from apps.banner.serializers import BannerListSerializer
 from apps.utils.CustomResponse import CustomResponse
 from django.utils.translation import gettext_lazy as _
 
-
+@extend_schema(summary='🔐 login qilgan hamma uchun')
 class BannerListAPIView(ListAPIView):
     """
         Banner listini olish
@@ -32,7 +33,7 @@ class BannerListAPIView(ListAPIView):
         return CustomResponse.success_response(
             data=serializer.data
         )
-
+@extend_schema(summary='🔐 login qilgan hamma uchun')
 class BannerDetailAPIView(APIView):
     """
     Banner detail

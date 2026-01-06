@@ -1,3 +1,4 @@
+from drf_spectacular.utils import extend_schema
 from rest_framework.generics import RetrieveAPIView
 
 from apps.profile.permission import  UserProfilePermission
@@ -5,7 +6,7 @@ from apps.profile.serializers.profiles import GET_ROLE_SERIALIZER
 from apps.utils.CustomResponse import CustomResponse
 from apps.utils.role_validate import RoleValidate
 
-
+@extend_schema(summary='🔐 login qilgan hamma uchun')
 class UserProfileRetrieveAPIView(RetrieveAPIView):
     """
     User profil qismi malumotlarni olish

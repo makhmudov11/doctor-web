@@ -3,9 +3,6 @@ from rest_framework.generics import RetrieveUpdateAPIView, RetrieveAPIView, Upda
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
-from rest_framework_simplejwt.exceptions import TokenError
-from rest_framework_simplejwt.token_blacklist.models import OutstandingToken
-from rest_framework_simplejwt.tokens import RefreshToken
 
 from apps.users.choices import UserContactTypeChoices
 from apps.users.models import SmsCodeTypeChoices, SmsCode
@@ -19,8 +16,10 @@ from apps.utils.generate_code import generate_code
 from apps.utils.role_validate import RoleValidate
 from apps.utils.token_claim import get_tokens_for_user, token_blacklist
 from apps.utils.validates import validate_email_or_phone_number
+from drf_spectacular.utils import extend_schema
 
 
+@extend_schema(summary='🔐 login qilgan hamma uchun')
 class UserDetailUpdateAPIView(UpdateAPIView):
     """
     Akkaunt malumotlarini oz'gartish
@@ -63,7 +62,7 @@ class UserDetailUpdateAPIView(UpdateAPIView):
             data=serializer.data
         )
 
-
+@extend_schema(summary='🔐 login qilgan hamma uchun')
 class UserDetailUpdateSendCodeAPIView(APIView):
     """
     Agar nomer o'zgartirmoqchi bo'lsa email yoki telefon raqamga kod jo'natish
@@ -105,7 +104,7 @@ class UserDetailUpdateSendCodeAPIView(APIView):
                 data=user
             )
 
-
+@extend_schema(summary='🔐 login qilgan hamma uchun')
 class UserDetailRetrieveAPIView(RetrieveAPIView):
     """
     Akkaunt malumotlarni olish (detail)
@@ -117,7 +116,7 @@ class UserDetailRetrieveAPIView(RetrieveAPIView):
     def get_object(self):
         return self.request.user
 
-
+@extend_schema(summary='🔐 login qilgan hamma uchun')
 class UserSelectRoleRetrieveAPIView(APIView):
     """
     Userga tegishli rolelar
@@ -133,7 +132,7 @@ class UserSelectRoleRetrieveAPIView(APIView):
             }
         )
 
-
+@extend_schema(summary='🔐 login qilgan hamma uchun')
 class UserChangeRoleAPIView(APIView):
     """
     Roleni o'zgartirish

@@ -2,7 +2,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
 from django.utils import timezone
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.views import APIView
 
 from apps.users.choices import UserContactTypeChoices
@@ -13,16 +13,18 @@ from apps.users.tasks import send_verification_code
 from apps.utils.CustomResponse import CustomResponse
 from apps.utils.eskiz import EskizUZ
 from apps.utils.generate_code import generate_code
+from drf_spectacular.utils import extend_schema
 
 User = get_user_model()
 
 
+@extend_schema(summary='🔐 login qilgan hamma uchun')
 class UserForgotPasswordAPIView(APIView):
     """
     Parolni tiklash
     """
     serializer_class = UserForgotPasswordSerializer
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
 
     def post(self, request):
 
@@ -63,13 +65,13 @@ class UserForgotPasswordAPIView(APIView):
         user = UserFullDataSerializer(user).data
         return CustomResponse.success_response(message='Parol tiklash uchun sms kod yuborildi.', data={"user": user})
 
-
+@extend_schema(summary='🔐 login qilgan hamma uchun')
 class UserResetPasswordAPIView(APIView):
     """
     Yangi parol kiritish
     """
     serializer_class = UserResetPasswordSerializer
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
 
     def post(self, request):
         contact = request.data.get('contact', '').strip()
@@ -91,7 +93,6 @@ class UserResetPasswordAPIView(APIView):
             _type=SmsCodeTypeChoices.CHANGE_PASSWORD,
             verified=True
         ).order_by('-created_at').first()
-
 
         if not user_code_obj:
             return CustomResponse.error_response(message="Kod almashtirish imkoni yo'q, kod tasdiqlanmagan")

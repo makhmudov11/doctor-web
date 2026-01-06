@@ -1,6 +1,7 @@
 from django.contrib.auth import get_user_model, authenticate
 from django.utils import timezone
 from django_filters.rest_framework import DjangoFilterBackend
+from drf_spectacular.utils import extend_schema, OpenApiParameter
 from rest_framework.generics import ListAPIView, CreateAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework import filters, status
 from rest_framework.parsers import MultiPartParser, FormParser
@@ -18,6 +19,23 @@ from apps.utils.token_claim import get_tokens_for_user
 User = get_user_model()
 
 
+@extend_schema(
+    parameters=[
+        OpenApiParameter(
+            name='search',
+            description='full_name, role, contact, contact_type, gender',
+            required=False,
+            type=str
+        ),
+        OpenApiParameter(
+            name='ordering',
+            description='created_at, full_name',
+            required=False,
+            type=str
+        )
+    ],
+    summary='🔐 admin uchun'
+)
 class AdminUserListAPIView(ListAPIView):
     permission_classes = [AdminPermission]
     serializer_class = AdminUserListSerializer
@@ -31,6 +49,7 @@ class AdminUserListAPIView(ListAPIView):
     ordering = ['-created_at']
 
 
+@extend_schema(summary='🔐 admin uchun')
 class AdminUserCreateAPIView(CreateAPIView):
     serializer_class = AdminUserCreateSerializer
     permission_classes = [AdminPermission]
@@ -38,7 +57,7 @@ class AdminUserCreateAPIView(CreateAPIView):
 
     parser_classes = [MultiPartParser, FormParser]
 
-
+@extend_schema(summary='🔐 admin uchun')
 class AdminUserRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
     serializer_class = AdminUserRetrieveUpdateDestroySerializer
     permission_classes = [AdminPermission]
@@ -56,11 +75,13 @@ class AdminUserRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
             code=status.HTTP_204_NO_CONTENT
         )
 
+@extend_schema(summary='🔐 admin uchun')
 class AdminLoginAPIView(APIView):
     """
     Faqat is_staff=True bo'lgan userlar uchun admin login.
     """
     serializer_class = AdminLoginSerializer
+
     def post(self, request):
         username = request.data.get('username')
         password = request.data.get('password')

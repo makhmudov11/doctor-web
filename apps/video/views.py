@@ -20,8 +20,10 @@ from apps.video.permission import VideoDestroyPermission, \
 from apps.video.serializers import VideoReelsSerializer, VideoCreateSerializer, \
     VideoCommentCreateSerializer, VideoCommentReplySerializer, CommentSerializer, \
     VideoReelsCommentNestedSerializer, CommentReactionSerializer, VideoAllListSerializer
+from drf_spectacular.utils import extend_schema, OpenApiParameter
 
 
+@extend_schema(summary='🔐 doctor uchun')
 class VideoCreateAPIView(CreateAPIView):
     """
     Video post yaratish
@@ -53,7 +55,7 @@ class VideoCreateAPIView(CreateAPIView):
             return self.serializer_class
         return VideoReelsSerializer
 
-
+@extend_schema(summary='🔐 doctor uchun')
 class VideoDestroyAPIView(DestroyAPIView):
     """
     Videoni o'chirish
@@ -82,7 +84,7 @@ class VideoDestroyAPIView(DestroyAPIView):
             code=status.HTTP_204_NO_CONTENT
         )
 
-
+@extend_schema(summary='🔐 doctor uchun')
 class ReelsCreateAPIView(CreateAPIView):
     """
     Reels yaratish
@@ -114,7 +116,7 @@ class ReelsCreateAPIView(CreateAPIView):
             return self.serializer_class
         return VideoReelsSerializer
 
-
+@extend_schema(summary='🔐 login qilgan hamma uchun')
 class VideoReactionAPIView(APIView):
     """
     Videoga like dislike bosish
@@ -171,7 +173,7 @@ class VideoReactionAPIView(APIView):
             data={"reaction": reaction_type}
         )
 
-
+@extend_schema(summary='🔐 login qilgan hamma uchun')
 class VideoCommentCreateAPIView(APIView):
     """
     Comment qoldirish
@@ -209,13 +211,13 @@ class VideoCommentCreateAPIView(APIView):
             data=CommentSerializer(instance=commet_obj, context={"request": request}).data
         )
 
-
+@extend_schema(summary='🔐 login qilgan hamma uchun')
 class VideoCommentListAPIView(APIView):
     """
     Videoning commentlarini listini olish
     """
     serializer_class = CommentSerializer
-    permission_classes = []
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, video_id):
         video = VideoReels.objects.filter(id=video_id).first()
@@ -231,7 +233,7 @@ class VideoCommentListAPIView(APIView):
         serializer = self.serializer_class(comments, many=True, context={"request": request})
         return CustomResponse.success_response(data=serializer.data)
 
-
+@extend_schema(summary='🔐 login qilgan hamma uchun')
 class DeleteVideoReelsCommentDestroyAPIView(DestroyAPIView):
     """
     Videoga yozilgan commentni o'chirish
@@ -261,7 +263,7 @@ class DeleteVideoReelsCommentDestroyAPIView(DestroyAPIView):
         instance.is_active = False
         instance.save(update_fields=['is_active'])
 
-
+@extend_schema(summary='🔐 login qilgan hamma uchun')
 class VideoReelsCommentReplyAPIView(APIView):
     """
     Video va reelsga yozilgan commentga reply qilish
@@ -299,7 +301,7 @@ class VideoReelsCommentReplyAPIView(APIView):
             code=status.HTTP_201_CREATED
         )
 
-
+@extend_schema(summary='🔐 login qilgan hamma uchun')
 class VideoReelsCommentReplyListAPIView(ListAPIView):
     """
     Videodagi commentlarga reply qilinga commentlar listini olish
@@ -318,7 +320,7 @@ class VideoReelsCommentReplyListAPIView(ListAPIView):
             is_active=True
         ).order_by('created_at')
 
-
+@extend_schema(summary='🔐 login qilgan hamma uchun')
 class CommentReactionAPIView(APIView):
     """
     Har qanday parent comment yoki reply commentlarga like va dislike qoldirish
@@ -378,6 +380,23 @@ class CommentReactionAPIView(APIView):
         )
 
 
+@extend_schema(
+    parameters=[
+        OpenApiParameter(
+            name='search',
+            description='description, profile, content_type',
+            required=False,
+            type=str
+        ),
+        OpenApiParameter(
+            name='ordering',
+            description='created_at, updated_at',
+            required=False,
+            type=str
+        )
+    ],
+    summary='🔐 hamma uchun'
+)
 class VideoAllListAPIView(ListAPIView):
     """
     Barcha videolar listi
@@ -396,10 +415,10 @@ class VideoAllListAPIView(ListAPIView):
     ordering_fields = ['created_at', 'updated_at']
     ordering = ['id']
 
-
+@extend_schema(summary='🔐 doctor uchun')
 class UserVideoListAPIView(ListAPIView):
     """
-    Usega tegishli videolar list
+    Userga tegishli videolar list
     """
     serializer_class = VideoAllListSerializer
     permission_classes = [UserAllVideoReelsPermission]
@@ -412,7 +431,7 @@ class UserVideoListAPIView(ListAPIView):
             content_type=VideoReelsTypeChoices.VIDEO
         )
 
-
+@extend_schema(summary='🔐 hamma uchun')
 class ReelsAllListAPIView(ListAPIView):
     """
     Barcha reelslar listi
@@ -431,7 +450,7 @@ class ReelsAllListAPIView(ListAPIView):
     ordering_fields = ['created_at', 'updated_at']
     ordering = ['id']
 
-
+@extend_schema(summary='🔐 doctor uchun')
 class UserReelsListAPIView(ListAPIView):
     """
     Userga tegishli reelslar listi
@@ -447,7 +466,7 @@ class UserReelsListAPIView(ListAPIView):
             content_type=VideoReelsTypeChoices.REELS
         )
 
-
+@extend_schema(summary='🔐 hamma uchun')
 class VideoReelsAddViewAPIView(APIView):
     """
     Video yoki reels ko'rish
