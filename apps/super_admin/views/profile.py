@@ -1,3 +1,4 @@
+from rest_framework import status
 from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.generics import ListAPIView, RetrieveAPIView
 from django_filters.rest_framework import DjangoFilterBackend
@@ -29,19 +30,28 @@ class AdminDoctorProfileListAPIView(ListAPIView):
 class AdminDoctorProfileRetrieveAPIView(RetrieveAPIView):
     serializer_class = DoctorProfileSerializer
     permission_classes = [AdminPermission]
+    lookup_field = 'public_id'
 
     def get_queryset(self):
-        public_id = self.kwargs.get('public_id', None)
+        return DoctorProfile.objects.filter(status=True, public_id=self.kwargs.get('public_id')).first()
+
+    def retrieve(self, request, *args, **kwargs):
+        public_id = kwargs.get('public_id', None)
         if public_id is None:
             return CustomResponse.error_response(
-                message=_("Shifokor id kelishi shart")
+                message="Public id topilmadi"
             )
-        try:
-            return DoctorProfile.objects.get(id=public_id, status=True)
-        except DoctorProfile.DoesNotExist:
+        data = self.get_queryset()
+        if not data:
             return CustomResponse.error_response(
-                message=_("Shifokor profili topilmadi")
+                message="Shifokor topilmadi"
             )
+        serializer = self.serializer_class(instance=data)
+        return CustomResponse.success_response(
+            data=serializer.data
+        )
+
+
 
 
 class AdminPatientProfileListAPIView(ListAPIView):
@@ -58,19 +68,25 @@ class AdminPatientProfileListAPIView(ListAPIView):
 
 
 class AdminPatientProfileRetrieveAPIView(RetrieveAPIView):
-    queryset = PatientProfile.objects.all()
     permission_classes = [AdminPermission]
     serializer_class = PatientProfileSerializer
+    lookup_field = 'public_id'
 
     def get_queryset(self):
-        public_id = self.kwargs.get('public_id', None)
+        return DoctorProfile.objects.filter(status=True, public_id=self.kwargs.get('public_id')).first()
+
+    def retrieve(self, request, *args, **kwargs):
+        public_id = kwargs.get('public_id', None)
         if public_id is None:
             return CustomResponse.error_response(
-                message=_("Bemor id kelishi shart")
+                message="Public id topilmadi"
             )
-        try:
-            return PatientProfile.objects.get(id=public_id, status=True)
-        except PatientProfile.DoesNotExist:
+        data = self.get_queryset()
+        if not data:
             return CustomResponse.error_response(
-                message=_("Bemor profili topilmadi")
+                message="Bemor topilmadi"
             )
+        serializer = self.serializer_class(instance=data)
+        return CustomResponse.success_response(
+            data=serializer.data
+        )
