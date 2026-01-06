@@ -10,7 +10,7 @@ class PatientProfileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = PatientProfile
-        fields = ['public_id', 'user', 'following_count', 'slug', 'status']
+        fields = ['public_id', 'user', 'following_count', 'slug', 'created_at', 'status']
 
 
 class DoctorProfileSerializer(serializers.ModelSerializer):

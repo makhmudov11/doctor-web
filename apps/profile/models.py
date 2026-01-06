@@ -199,3 +199,4 @@ class StoryView(CreateUpdateBaseModel):
         db_table = 'story_view'
         verbose_name = 'Story View'
         verbose_name_plural = 'Story Viewers'
+

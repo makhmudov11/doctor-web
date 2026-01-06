@@ -9,6 +9,6 @@ class CustomValidationError(APIException):
 
     def __init__(self, detail=None, code=None):
         if detail is not None:
-            self.detail = {"success": False, "message": detail, "data": None}
+            self.detail = {"success": False, "message": detail, "data": []}
         else:
-            self.detail = {"success": False, "message": self.default_detail, "data": None}
+            self.detail = {"success": False, "message": self.default_detail, "data": []}

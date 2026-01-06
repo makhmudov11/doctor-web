@@ -1,4 +1,3 @@
-from rest_framework import status
 from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.generics import ListAPIView, RetrieveAPIView
 from django_filters.rest_framework import DjangoFilterBackend
@@ -9,9 +8,7 @@ from apps.super_admin.serializers.profile import AdminDoctorProfileListSerialize
 from apps.super_admin.permissions.users import AdminPermission
 from apps.profile.models import DoctorProfile, PatientProfile
 from apps.super_admin.paginations.profile import AdminListPagination
-from apps.users.serializers.user_detail import UserFullDataSerializer
 from apps.utils.CustomResponse import CustomResponse
-from django.utils.translation import gettext_lazy as _
 
 
 class AdminDoctorProfileListAPIView(ListAPIView):
@@ -52,12 +49,10 @@ class AdminDoctorProfileRetrieveAPIView(RetrieveAPIView):
         )
 
 
-
-
 class AdminPatientProfileListAPIView(ListAPIView):
     serializer_class = AdminPatientProfileListSerializer
     permission_classes = [AdminPermission]
-    queryset = PatientProfile.objects.all()
+    queryset = PatientProfile.objects.prefetch_related('patient_address')
     pagination_class = AdminListPagination
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_fields = ['status']
@@ -69,7 +64,7 @@ class AdminPatientProfileListAPIView(ListAPIView):
 
 class AdminPatientProfileRetrieveAPIView(RetrieveAPIView):
     permission_classes = [AdminPermission]
-    serializer_class = PatientProfileSerializer
+    serializer_class = AdminPatientProfileListSerializer
     lookup_field = 'public_id'
 
     def get_queryset(self):

@@ -8,7 +8,7 @@ from apps.utils.CustomValidationError import CustomValidationError
 from apps.utils.base_models import GenderChoices
 
 
-class AddPatientSerializer(serializers.ModelSerializer):
+class AddPatientCreateSerializer(serializers.ModelSerializer):
     birth_date = serializers.DateField(
         input_formats=["%d.%m.%Y", "%d/%m/%Y"],
         required=True
@@ -41,10 +41,10 @@ class AddPatientDetailSerializer(serializers.ModelSerializer):
 
 class UserAddPatientListSerializer(serializers.Serializer):
     patient = PatientProfileSerializer(read_only=True)
-    patients = serializers.SerializerMethodField()
+    add_patients = serializers.SerializerMethodField()
 
-    def get_patients(self, obj):
-        qs = obj.get('patients')
+    def get_add_patients(self, obj):
+        qs = obj.get('add_patients')
         if not qs.exists():
             return [AddPatientDetailSerializer().data]
         return AddPatientDetailSerializer(instance=qs, many=True).data

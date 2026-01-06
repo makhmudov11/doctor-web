@@ -42,6 +42,7 @@ urlpatterns = [
                   path('service/', include('apps.service.urls', namespace='service')),
                   path('profile/', include('apps.profile.urls', namespace='profile')),
                   path('content/', include('apps.video.urls', namespace='content')),
+                  path('history/', include('apps.history.urls', namespace='history')),
                   path('order/', include('apps.order.urls', namespace='order')),
 
               ] + SPECTACULAR_URL + TOKEN_REFRESH

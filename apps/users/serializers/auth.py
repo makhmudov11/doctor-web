@@ -46,10 +46,10 @@ class RegisterSerializer(serializers.ModelSerializer):
             raise CustomValidationError(detail="Passport seriya kiritilishi shart.")
 
         if not gender:
-            raise CustomValidationError(detail="Passport seriya kiritilishi shart.")
+            raise CustomValidationError(detail="Jins kiritilishi shart.")
 
         if not password:
-            raise CustomValidationError(detail="Jins kiritilishi shart.")
+            raise CustomValidationError(detail="Parol kiritilishi shart.")
 
         result = validate_email_or_phone_number(contact)
 

@@ -38,6 +38,7 @@ CUSTOM_APPS = [
     'apps.order',
     'apps.banner',
     'apps.service',
+    'apps.history',
 ]
 
 CUSTOM_INSTALLED_APPS = [
@@ -190,12 +191,12 @@ EMAIL_HOST_USER = decouple.config('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = decouple.config('EMAIL_HOST_PASSWORD')
 
 SPECTACULAR_SETTINGS = {
-    'TITLE': 'My API',
-    'DESCRIPTION': 'API docs',
-    'VERSION': '1.0.0',
+    'TITLE': 'Sinon API',
+    'DESCRIPTION': 'Sinon API documentation',
+    'VERSION': 'v1',
     'COMPONENT_SPLIT_REQUEST': True,
-
 }
+
 
 # APPLE KEY
 TEAM_ID = decouple.config('TEAM_ID')
