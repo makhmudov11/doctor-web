@@ -162,9 +162,7 @@ cython_debug/
 .idea/
 .env
 media/
-apps/utils/firebase.py
 apps/payment
 static/
-apps/notifications
-credentials.json
-
+#apps/notifications
+#credentials.json
