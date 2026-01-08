@@ -164,7 +164,5 @@ cython_debug/
 media/
 apps/payment
 static/
-#apps/notifications
-#credentials.json"credentials.json" 
-"credentials.json" 
-"credentials.json" 
+apps/notifications
+credentials.json
