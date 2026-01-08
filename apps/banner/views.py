@@ -1,4 +1,5 @@
 from drf_spectacular.utils import extend_schema
+from rest_framework import status
 from rest_framework.generics import ListAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
@@ -27,7 +28,8 @@ class BannerListAPIView(ListAPIView):
             empty_data = [{field: None for field in self.serializer_class().fields}]
             return CustomResponse.error_response(
                 message=_("Banner topilmadi"),
-                data=empty_data
+                data=empty_data,
+                code=status.HTTP_204_NO_CONTENT
             )
         serializer = self.get_serializer(banners, many=True)
         return CustomResponse.success_response(
@@ -46,14 +48,16 @@ class BannerDetailAPIView(APIView):
         if not banner_id:
             return CustomResponse.error_response(
                 message=_("Banner id topilmadi"),
-                data=empty_data
+                data=empty_data,
+                code=status.HTTP_400_BAD_REQUEST
             )
         try:
             banner = Banner.objects.get(id=banner_id)
         except Banner.DoesNotExist:
             return CustomResponse.error_response(
                 message=_("Banner topilmadi"),
-                data=empty_data
+                data=empty_data,
+                code=status.HTTP_404_NOT_FOUND
             )
         serializer = self.serializer_class(instance=banner).data
 

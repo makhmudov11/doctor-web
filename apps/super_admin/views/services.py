@@ -59,13 +59,13 @@ class AdminBannerRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
             instance = self.get_object()
             serializer = self.get_serializer(instance)
             return CustomResponse.success_response(
-                message="Banner topildi",
+                message=_("Banner topildi"),
                 data=serializer.data
             )
         except Exception:
             return CustomResponse.error_response(
-                message="Banner topilmadi",
-                code=status.HTTP_200_OK
+                message=_("Banner topilmadi"),
+                code=status.HTTP_404_NOT_FOUND
             )
 
 @extend_schema(summary='🔐 admin uchun')
@@ -173,7 +173,8 @@ class AdminSocialNetworkListAPIView(ListAPIView):
         data = self.get_queryset()
         if not data.exists():
             return CustomResponse.error_response(
-                message=_("Malumot topilmadi")
+                message=_("Malumot topilmadi"),
+                code=status.HTTP_204_NO_CONTENT
             )
         serializer = self.serializer_class(instance=data, many=True)
         return CustomResponse.success_response(
@@ -200,7 +201,7 @@ class AdminSocialNetworkDetailAPIView(RetrieveUpdateDestroyAPIView):
         try:
             return super().get_object()
         except Http404:
-            raise CustomValidationError(_("Ijtimoiy tarmoq topilmadi"))
+            raise CustomValidationError(_("Ijtimoiy tarmoq topilmadi"), code=status.HTTP_404_NOT_FOUND)
 
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
@@ -227,6 +228,7 @@ class AdminSocialNetworkDetailAPIView(RetrieveUpdateDestroyAPIView):
         instance.save(update_fields=['status'])
 
         return CustomResponse.success_response(
-            message=_("Ijtimoiy tarmoq o‘chirildi")
+            message=_("Ijtimoiy tarmoq o‘chirildi"),
+            code=status.HTTP_204_NO_CONTENT
         )
 

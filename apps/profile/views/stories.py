@@ -8,6 +8,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.status import HTTP_201_CREATED
 from rest_framework.views import APIView
+from django.utils.translation import gettext_lazy as _
 
 from apps.profile.models import Story, StoryView
 from apps.profile.permission import IsDoctor, DoctorStoryPermission
@@ -31,12 +32,13 @@ class UserStoryCreateAPIView(CreateAPIView):
         try:
             profile = RoleValidate.get_role_model(request=request).objects.get(user=self.request.user)
         except Exception as e:
-            return CustomResponse.error_response(message='Foydalanuvchiga tegishli profil mavjud emas')
+            return CustomResponse.error_response(message=_('Foydalanuvchiga tegishli profil mavjud emas'),
+                                                 code=status.HTTP_404_NOT_FOUND)
         serializer = self.serializer_class(data=request.data, context={"request": request})
         serializer.is_valid(raise_exception=True)
         story = serializer.save(profile=profile)
         full_data = self.get_serializer(story).data
-        return CustomResponse.success_response(message='Storis muvaffaqiyatli yaratildi', data=full_data,
+        return CustomResponse.success_response(message=_('Storis muvaffaqiyatli yaratildi'), data=full_data,
                                                code=HTTP_201_CREATED)
 
 @extend_schema(summary='🔐 doctor uchun')
@@ -78,15 +80,17 @@ class StoryMarkViewedAPIView(APIView):
             profile = RoleValidate.get_profile_user(request=request)
             if story_obj.profile == profile:
                 return CustomResponse.error_response(
-                    message="O'zini storyini ko'rish mumkin lekin ko'rishlar soni oshmaydi"
+                    message=_("O'zini storyini ko'rish mumkin lekin ko'rishlar soni oshmaydi")
                 )
         except Story.DoesNotExist:
             return CustomResponse.error_response(
-                message="Story topilmadi"
+                message=_("Story topilmadi"),
+                code=status.HTTP_404_NOT_FOUND
             )
         except Exception as e:
             return CustomResponse.error_response(
-                message=f"Profile topilmadi: {str(e)}"
+                message=_(f"Profile topilmadi: {str(e)}"),
+                code=status.HTTP_404_NOT_FOUND
             )
 
         try:
@@ -98,14 +102,16 @@ class StoryMarkViewedAPIView(APIView):
                 )
                 if not created:
                     return CustomResponse.error_response(
-                        message="Siz ushbu storisni avval avval ko'rilgan"
+                        message=_("Siz ushbu storisni avval avval ko'rilgan"),
+                        code=status.HTTP_400_BAD_REQUEST
                     )
                 return CustomResponse.success_response(
-                    message="Ko'rish muvaffaqiyatli bajarildi"
+                    message=_("Ko'rish muvaffaqiyatli bajarildi")
                 )
         except Exception as e:
             return CustomResponse.error_response(
-                message=f"Story saqlashda xatolik: {str(e)}"
+                message=_(f"Story saqlashda xatolik: {str(e)}"),
+                code=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
 
 @extend_schema(summary='🔐 doctor uchun')
@@ -119,23 +125,23 @@ class UserStoryDeleteAPIView(DestroyAPIView):
         story_id = kwargs.get('story_id', None)
         if story_id is None:
             return CustomResponse.error_response(
-                message="Storis id kelishi shart"
+                message=_("Storis id kelishi shart")
             )
         if not isinstance(story_id, int):
             return CustomResponse.error_response(
-                message="Story id son bolishi kerak"
+                message=_("Story id son bolishi kerak")
             )
         profile = RoleValidate.get_profile_user(request=request)
-        print(profile)
         try:
             story_obj = Story.objects.get(id=story_id, profile=profile, status=False)
         except Story.DoesNotExist:
             return CustomResponse.error_response(
-                message="Storis mavjud emas"
+                message=_("Storis mavjud emas"),
+                code=status.HTTP_404_NOT_FOUND
             )
         self.perform_destroy(instance=story_obj)
         return CustomResponse.success_response(
-            message="Storis muvaffaqiyatli o'chirildi",
+            message=_("Storis muvaffaqiyatli o'chirildi"),
             code=status.HTTP_204_NO_CONTENT
         )
 
@@ -160,7 +166,7 @@ class UserStoryViewedAllListAPIView(ListAPIView):
         story_id = kwargs.get('story_id', None)
         if story_id is None:
             return CustomResponse.error_response(
-                message='Story id kelishi shart'
+                message=_('Story id kelishi shart')
             )
         try:
             story_id = int(story_id)
@@ -171,12 +177,14 @@ class UserStoryViewedAllListAPIView(ListAPIView):
             story = Story.objects.get(id=story_id)
         except Story.DoesNotExist:
             return CustomResponse.error_response(
-                message="Storis topilmadi"
+                message=_("Storis topilmadi"),
+                code=status.HTTP_404_NOT_FOUND
             )
         qs = self.get_queryset(story_id=story_id, profile=profile)
         if not qs.exists():
             return CustomResponse.error_response(
-                message="Ko'rilganlar topilmadi"
+                message=_("Ko'rilganlar topilmadi"),
+                code=status.HTTP_404_NOT_FOUND
             )
         story_serializer = UserStoryListSerializer(instance=story,
                                                    context={'request': request})

@@ -41,6 +41,11 @@ class UserAddPatientListAPIView(ListAPIView):
 
     def list(self, request, *args, **kwargs):
         queryset = self.get_queryset()
+        if not queryset.exists():
+            return CustomResponse.error_response(
+                message=_("Siz qo'shgan bemorlar topilmadi"),
+                code=status.HTTP_404_NOT_FOUND
+            )
 
         profile = RoleValidate.get_profile_user(request)
 

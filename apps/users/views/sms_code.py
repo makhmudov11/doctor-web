@@ -1,4 +1,6 @@
 from datetime import timedelta
+from django.utils.translation import gettext_lazy as _
+from rest_framework import status
 
 from apps.utils.BaseClass import BaseVerifyCode
 from django.contrib.auth import get_user_model
@@ -29,7 +31,7 @@ class VerifyCodeAPIView(APIView):
     def post(self, request):
         contact = request.data.get('contact', '').strip()
         if not contact:
-            return CustomResponse.error_response(message='Email yoki telefon raqam kelishi shart')
+            return CustomResponse.error_response(message=_('Email yoki telefon raqam kelishi shart'))
 
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -38,7 +40,7 @@ class VerifyCodeAPIView(APIView):
 
         user = User.objects.filter(contact=contact).first()
         if not user:
-            return CustomResponse.error_response(message='User topilmadi')
+            return CustomResponse.error_response(message=_('User topilmadi'), code=status.HTTP_404_NOT_FOUND)
 
         user_code_obj = SmsCode.objects.filter(
             contact=contact,
@@ -47,23 +49,24 @@ class VerifyCodeAPIView(APIView):
         ).order_by('-created_at').first()
 
         if not user_code_obj:
-            return CustomResponse.error_response(message="Kod topilmadi")
+            return CustomResponse.error_response(message=_("Kod topilmadi"), code=status.HTTP_404_NOT_FOUND)
 
         if code != user_code_obj.send_code:
             user_code_obj.attempts += 1
             user_code_obj.save(update_fields=['attempts'])
 
             if user_code_obj.attempts == self.MAX_ATTEMPTS:
-                return CustomResponse.error_response(message="Urinishlar soni tugadi.")
+                return CustomResponse.error_response(message=_("Urinishlar soni tugadi."))
 
             return CustomResponse.error_response(
-                message=f"Kod noto'g'ri kiritildi.",
+                message=_(f"Kod noto'g'ri kiritildi."),
                 data={
                     "sms_code_obj": SmsCodeSerializer(user_code_obj).data,
                     "attempts": self.MAX_ATTEMPTS - user_code_obj.attempts
                 },
             )
         return BaseVerifyCode.sms_code_type_response(user_code_obj, user)
+
 
 @extend_schema(summary='🔐 login qilgan hamma uchun')
 class ResendCode(APIView):
@@ -78,7 +81,7 @@ class ResendCode(APIView):
         contact = request.data.get('contact', '').strip()
 
         if not contact:
-            return CustomResponse.error_response(message="Email yoki telefon raqam kelishi shart.")
+            return CustomResponse.error_response(message=_("Email yoki telefon raqam kelishi shart."))
 
         user_code_obj = SmsCode.objects.filter(
             contact=contact,
@@ -86,15 +89,15 @@ class ResendCode(APIView):
         ).order_by('-created_at').first()
 
         if not user_code_obj:
-            return CustomResponse.error_response(message='Kod topilmadi')
+            return CustomResponse.error_response(message=_('Kod topilmadi'), code=status.HTTP_404_NOT_FOUND)
 
         if user_code_obj.expires_at > timezone.now():
-            return CustomResponse.error_response(message='Kod amal qilish muddati tugamagan')
+            return CustomResponse.error_response(message=_('Kod amal qilish muddati tugamagan'))
 
         if user_code_obj.resend_code == self.MAX_RESEND_CODE:
             user_code_obj.delete()
             return CustomResponse.error_response(
-                message="Hech qanday kod topilmadi.",
+                message=_("Hech qanday kod topilmadi."), code=status.HTTP_404_NOT_FOUND,
             )
 
         code = generate_code()
@@ -117,7 +120,8 @@ class ResendCode(APIView):
                     )
         except Exception as e:
             return CustomResponse.error_response(
-                message='Kod yuborishda xatolik'
+                message=_('Kod yuborishda xatolik'),
+                code=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
         sms_code_obj = SmsCodeSerializer(user_code_obj).data
         return CustomResponse.success_response(
@@ -126,5 +130,5 @@ class ResendCode(APIView):
                 "sms_code_obj": sms_code_obj,
                 "qayta_jonatish_qoldi": self.MAX_RESEND_CODE - sms_code_obj['resend_code']
             },
-            message="Kod qaytadan yuborildi."
+            message=_("Kod qaytadan yuborildi.")
         )

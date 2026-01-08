@@ -14,7 +14,7 @@ class CustomResponse:
         }, status=code)
 
     @staticmethod
-    def error_response(data=None, message="Error", code=status.HTTP_200_OK):
+    def error_response(data=None, message="Error", code=status.HTTP_400_BAD_REQUEST):
         if data is None:
             data = []
         return Response({

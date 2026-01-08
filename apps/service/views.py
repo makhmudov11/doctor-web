@@ -1,4 +1,5 @@
 from django.utils.translation import gettext_lazy as _
+from rest_framework import status
 from rest_framework.generics import ListAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
@@ -53,7 +54,8 @@ class ServiceDetailAPIView(APIView):
         except Service.DoesNotExist:
             return CustomResponse.error_response(
                 message=_("Servis topilmadi"),
-                data=empty_data
+                data=empty_data,
+                code=status.HTTP_404_NOT_FOUND
             )
         serializer = self.serializer_class(instance=service).data
 

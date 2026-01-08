@@ -39,6 +39,7 @@ CUSTOM_APPS = [
     'apps.banner',
     'apps.service',
     'apps.history',
+    'apps.payment.payme',
 ]
 
 CUSTOM_INSTALLED_APPS = [
@@ -196,7 +197,6 @@ SPECTACULAR_SETTINGS = {
     'VERSION': 'v1',
     'COMPONENT_SPLIT_REQUEST': True,
 }
-
 
 # APPLE KEY
 TEAM_ID = decouple.config('TEAM_ID')

@@ -1,4 +1,5 @@
 from drf_spectacular.utils import extend_schema
+from rest_framework import status
 from rest_framework.generics import ListAPIView
 from rest_framework.permissions import IsAuthenticated
 from apps.service.models import SocialNetwork
@@ -20,7 +21,8 @@ class SocialNetworkListAPIView(ListAPIView):
         data = self.get_queryset()
         if not data.exists():
             return CustomResponse.error_response(
-                message=_("Malumot topilmadi")
+                message=_("Malumot topilmadi"),
+                code=status.HTTP_204_NO_CONTENT
             )
         serializer = self.serializer_class(instance=data, many=True)
         return CustomResponse.success_response(
@@ -40,7 +42,8 @@ class SocialNetworkDetailAPIView(APIView):
             data = SocialNetwork.objects.get(id=social_id, status=True)
         except SocialNetwork.DoesNotExist:
             return CustomResponse.error_response(
-                message=_("Ijtimoy tarmoq topilmadi")
+                message=_("Ijtimoy tarmoq topilmadi"),
+                code=status.HTTP_404_NOT_FOUND
             )
         serializer = SocialNetworkListSerializer(data)
         return CustomResponse.success_response(

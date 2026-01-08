@@ -1,6 +1,7 @@
 from traceback import print_tb
 
 from drf_spectacular.utils import extend_schema
+from rest_framework import status
 from rest_framework.generics import CreateAPIView
 from rest_framework.status import HTTP_404_NOT_FOUND
 from rest_framework.views import APIView
@@ -21,7 +22,8 @@ class PatientAddressAPIView(APIView):
     def get(self, request, patient_public_id):
         if not patient_public_id:
             return CustomResponse.error_response(
-                message=_("Bemor id kelishi shart")
+                message=_("Bemor id kelishi shart"),
+                code=status.HTTP_400_BAD_REQUEST
             )
         try:
             profile = PatientProfile.objects.get(public_id=patient_public_id, status=True)
@@ -32,13 +34,15 @@ class PatientAddressAPIView(APIView):
             )
         if profile.public_id != patient_public_id:
             return CustomResponse.error_response(
-                message=_("Siz faqat o'zingizning manzillaringizni ko'ra olasiz")
+                message=_("Siz faqat o'zingizning manzillaringizni ko'ra olasiz"),
+                code=status.HTTP_400_BAD_REQUEST
             )
 
         data = Address.objects.filter(patient=profile, status=True)
         if not data.exists():
             return CustomResponse.error_response(
-                message=_("Bemorga tegishli adresslar topilmadi")
+                message=_("Bemorga tegishli adresslar topilmadi"),
+                code=status.HTTP_404_NOT_FOUND
 
             )
         serializer = AddressSerializer(instance=data, many=True)
@@ -60,7 +64,8 @@ class AddressCreateAPIView(CreateAPIView):
         data = serializer.save(patient=profile)
         serializer = AddressFullDataSerializer(instance=data)
         return CustomResponse.success_response(
-            data=serializer.data
+            data=serializer.data,
+            code=status.HTTP_201_CREATED
         )
 
 
@@ -71,19 +76,22 @@ class AddressDeleteAPIView(APIView):
     def delete(self, request, address_id):
         if not address_id:
             return CustomResponse.error_response(
-                message=_("Address id kelishi shart")
+                message=_("Address id kelishi shart"),
+                code=status.HTTP_400_BAD_REQUEST
             )
         profile = RoleValidate.get_profile_user(request)
         try:
             address_obj = Address.objects.get(id=address_id, status=True, patient=profile)
         except Address.DoesNotExist:
             return CustomResponse.error_response(
-                message=_("Address topilmadi")
+                message=_("Address topilmadi"),
+                code=status.HTTP_404_NOT_FOUND
             )
         address_obj.status = False
         address_obj.save(update_fields=['status'])
         return CustomResponse.error_response(
-            message=_("Address muvaffaqiyatli o'chirildi")
+            message=_("Address muvaffaqiyatli o'chirildi"),
+            code=status.HTTP_200_OK
         )
 
 
@@ -94,18 +102,18 @@ class AddressDetailAPIView(APIView):
     def get(self, request, address_id):
         if not address_id:
             return CustomResponse.error_response(
-                message=_("Address id kelishi shart")
+                message=_("Address id kelishi shart"),
+                code=status.HTTP_400_BAD_REQUEST
             )
         profile = RoleValidate.get_profile_user(request)
         try:
-            print(profile)
             address_obj = Address.objects.get(id=address_id, status=True, patient=profile)
-            print(address_obj)
         except Address.DoesNotExist:
             return CustomResponse.error_response(
-                message=_("Address topilmadi")
+                message=_("Address topilmadi"),
+                code=status.HTTP_404_NOT_FOUND
             )
         serializer = AddressFullDataSerializer(instance=address_obj)
-        return CustomResponse.error_response(
+        return CustomResponse.success_response(
             data=serializer.data
         )

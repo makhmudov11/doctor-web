@@ -71,7 +71,7 @@ class AdminUserRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
         instance.save(update_fields=['is_active', 'deleted_at'])
 
         return CustomResponse.success_response(
-            message="Foydalanuvchi muvaffaqiyatli o'chirildi",
+            message=_("Foydalanuvchi muvaffaqiyatli o'chirildi"),
             code=status.HTTP_204_NO_CONTENT
         )
 

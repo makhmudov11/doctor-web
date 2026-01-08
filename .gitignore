@@ -163,4 +163,5 @@ cython_debug/
 .env
 media/
 apps/utils/firebase.py
+apps/payment
 

@@ -40,7 +40,7 @@ class VideoCreateAPIView(CreateAPIView):
         full_serializer = VideoReelsSerializer(video, context={'request': request})
         return CustomResponse.success_response(
             data=full_serializer.data,
-            message="Video yaratildi"
+            message=_("Video yaratildi")
         )
 
     def perform_create(self, serializer):
@@ -151,7 +151,8 @@ class VideoReactionAPIView(APIView):
             obj.delete()
             return CustomResponse.success_response(
                 message=_("Reaksiya o‘chirildi"),
-                data={"reaction": None}
+                data={"reaction": None},
+                code=status.HTTP_204_NO_CONTENT
             )
 
         if obj:
@@ -207,7 +208,7 @@ class VideoCommentCreateAPIView(APIView):
         )
 
         return CustomResponse.success_response(
-            message="Izoh qoldirildi",
+            message=_("Izoh qoldirildi"),
             data=CommentSerializer(instance=commet_obj, context={"request": request}).data
         )
 
@@ -222,7 +223,7 @@ class VideoCommentListAPIView(APIView):
     def get(self, request, video_id):
         video = VideoReels.objects.filter(id=video_id).first()
         if not video:
-            return CustomResponse.error_response(message=_("Video topilmadi"))
+            return CustomResponse.error_response(message=_("Video topilmadi"), code=status.HTTP_404_NOT_FOUND)
 
         comments = VideoReelsComment.objects.filter(
             content=video,
@@ -254,7 +255,8 @@ class DeleteVideoReelsCommentDestroyAPIView(DestroyAPIView):
         instance = self.get_object()
         if not instance:
             return CustomResponse.error_response(
-                message=_("Comment topilmadi")
+                message=_("Comment topilmadi"),
+                code=status.HTTP_404_NOT_FOUND
             )
         self.perform_destroy(instance)
         return CustomResponse.success_response(code=status.HTTP_204_NO_CONTENT)
@@ -283,7 +285,7 @@ class VideoReelsCommentReplyAPIView(APIView):
                 is_active=True
             )
         except VideoReelsComment.DoesNotExist:
-            return CustomResponse.error_response("Parent comment topilmadi")
+            return CustomResponse.error_response(_("Parent comment topilmadi"), code=status.HTTP_404_NOT_FOUND)
 
         profile = RoleValidate.get_profile_user(request)
 
@@ -332,7 +334,7 @@ class CommentReactionAPIView(APIView):
         reaction = request.data.get('reaction')
 
         if reaction not in dict(ReactionChoices.choices):
-            return CustomResponse.error_response("Reaction noto‘g‘ri")
+            return CustomResponse.error_response(_("Reaction noto‘g‘ri"))
 
         try:
             comment = VideoReelsComment.objects.get(
@@ -340,7 +342,7 @@ class CommentReactionAPIView(APIView):
                 is_active=True
             )
         except VideoReelsComment.DoesNotExist:
-            return CustomResponse.error_response(message=_("Comment topilmadi"))
+            return CustomResponse.error_response(message=_("Comment topilmadi"), code=status.HTTP_404_NOT_FOUND)
 
         profile = RoleValidate.get_profile_user(request)
         ct = ContentType.objects.get_for_model(profile)
@@ -354,7 +356,7 @@ class CommentReactionAPIView(APIView):
         if obj and obj.reaction == reaction:
             obj.delete()
             return CustomResponse.success_response(
-                message="Reaction o‘chirildi",
+                message=_("Reaction o‘chirildi"),
                 data={"reaction": None}
             )
 
@@ -362,7 +364,7 @@ class CommentReactionAPIView(APIView):
             obj.reaction = reaction
             obj.save(update_fields=['reaction'])
             return CustomResponse.success_response(
-                message="Reaction yangilandi",
+                message=_("Reaction yangilandi"),
                 data={"reaction": reaction}
             )
 
@@ -374,7 +376,7 @@ class CommentReactionAPIView(APIView):
         )
 
         return CustomResponse.success_response(
-            message="Reaction qo‘shildi",
+            message=_("Reaction qo‘shildi"),
             data={"reaction": reaction},
             code=status.HTTP_201_CREATED
         )
@@ -477,7 +479,7 @@ class VideoReelsAddViewAPIView(APIView):
         try:
             video = VideoReels.objects.get(id=content_id)
         except VideoReels.DoesNotExist:
-            return CustomResponse.error_response(message="Video topilmadi", code=status.HTTP_404_NOT_FOUND)
+            return CustomResponse.error_response(message=_("Video topilmadi"), code=status.HTTP_404_NOT_FOUND)
 
         profile = RoleValidate.get_profile_user(request)
         ct = ContentType.objects.get_for_model(profile)
@@ -489,5 +491,5 @@ class VideoReelsAddViewAPIView(APIView):
         )
 
         return CustomResponse.success_response(
-            message="Video muvaffaqiyatli ko'rildi"
+            message=_("Video muvaffaqiyatli ko'rildi")
         )

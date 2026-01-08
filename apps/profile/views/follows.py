@@ -4,6 +4,7 @@ from drf_spectacular.utils import extend_schema
 from rest_framework import status
 from rest_framework.generics import ListAPIView, CreateAPIView
 from rest_framework.views import APIView
+from django.utils.translation import gettext_lazy as _
 
 from apps.profile.choices import FollowChoices
 from apps.profile.models import DoctorProfile, Follow
@@ -31,7 +32,8 @@ class UserFollowListAPIView(ListAPIView):
         )
         if not qs.exists():
             raise CustomValidationError(
-                detail=f"{self.request.user.full_name or '?'}ga tegishli followlar mavjud emas"
+                detail=_(f"{self.request.user.full_name or '?'}ga tegishli followlar mavjud emas"),
+                code=status.HTTP_204_NO_CONTENT
             )
         return qs
 
@@ -69,7 +71,8 @@ class UserFollowCreateAPIView(CreateAPIView):
         serializer.is_valid(raise_exception=True)
         if profile_public_id == profile.public_id:
             return CustomResponse.error_response(
-                message="O'z o'ziga follow qilish mumkin emas"
+                message=_("O'z o'ziga follow qilish mumkin emas"),
+                code=status.HTTP_400_BAD_REQUEST
             )
         try:
             following_user = DoctorProfile.objects.get(
@@ -77,7 +80,8 @@ class UserFollowCreateAPIView(CreateAPIView):
             )
         except DoctorProfile.DoesNotExist:
             return CustomResponse.error_response(
-                message=f"{profile_public_id} lik shifokor topilmadi"
+                message=_(f"{profile_public_id} lik shifokor topilmadi"),
+                code=status.HTTP_404_NOT_FOUND
             )
         try:
             with transaction.atomic():
@@ -92,7 +96,7 @@ class UserFollowCreateAPIView(CreateAPIView):
                         follow_obj.save(update_fields=['status'])
                     else:
                         return CustomResponse.error_response(
-                            message='Siz avval follow qilgansiz'
+                            message=_('Siz avval follow qilgansiz')
                         )
                 data = self.serializer_class(instance=follow_obj, context={"request": request}).data
                 return CustomResponse.success_response(
@@ -102,7 +106,8 @@ class UserFollowCreateAPIView(CreateAPIView):
                 )
         except Exception as e:
             return CustomResponse.error_response(
-                message=f'Malumot saqlashda xatolik: {str(e)}'
+                message=_(f'Malumot saqlashda xatolik: {str(e)}'),
+                code=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
 
 @extend_schema(summary='🔐 login qilgan hamma uchun')
@@ -122,7 +127,7 @@ class UserUnfollowUserAPIView(APIView):
         serializer.is_valid(raise_exception=True)
         if profile_public_id == profile.public_id:
             return CustomResponse.error_response(
-                message="O'z o'zidan unfollow qilish mumkin emas"
+                message=_("O'z o'zidan unfollow qilish mumkin emas")
             )
         try:
             with transaction.atomic():
@@ -136,22 +141,22 @@ class UserUnfollowUserAPIView(APIView):
                 follow_obj.save(update_fields=['status'])
 
                 return CustomResponse.success_response(
-                    message='Unfollow muvaffaqiyatli bajarildi',
+                    message=_('Unfollow muvaffaqiyatli bajarildi'),
                 )
         except DoctorProfile.DoesNotExist:
             return CustomResponse.error_response(
-                message=f"{profile_public_id} lik shifokor topilmadi",
+                message=_(f"{profile_public_id} lik shifokor topilmadi"),
                 code=status.HTTP_404_NOT_FOUND
             )
         except Follow.DoesNotExist:
             return CustomResponse.error_response(
                 message="Foydalanuvchi ushbu shifokorga follow qilmagan",
-                code=status.HTTP_400_BAD_REQUEST
+                code=status.HTTP_404_NOT_FOUND
             )
         except Exception as e:
             return CustomResponse.error_response(
                 message=f'Unfollow qilishda xatolik yuz berdi: {str(e)}',
-                code=status.HTTP_400_BAD_REQUEST
+                code=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
 
 @extend_schema(summary='🔐 doctor uchun')
@@ -170,7 +175,8 @@ class UserFollowerListAPIView(ListAPIView):
         )
         if not qs.exists():
             raise CustomValidationError(
-                detail="Userga tegishli followerslar mavjud emas"
+                detail=_("Userga tegishli followerslar mavjud emas"),
+                code=status.HTTP_204_NO_CONTENT
             )
         return qs
 

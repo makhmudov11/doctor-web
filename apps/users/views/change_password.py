@@ -2,9 +2,10 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
 from django.utils import timezone
+from rest_framework import status
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.views import APIView
-
+from django.utils.translation import gettext_lazy as _
 from apps.users.choices import UserContactTypeChoices
 from apps.users.models import SmsCode, SmsCodeTypeChoices
 from apps.users.serializers.auth import UserForgotPasswordSerializer, UserResetPasswordSerializer
@@ -37,14 +38,16 @@ class UserForgotPasswordAPIView(APIView):
         user = User.objects.filter(contact=contact, status=True).first()
 
         if not user:
-            return CustomResponse.error_response(message='User topilmadi')
+            return CustomResponse.error_response(message=_('User topilmadi'),
+                                                 code=status.HTTP_404_NOT_FOUND )
 
         code = generate_code()
         try:
             SmsCode.create_for_contact(contact=contact, code=code, _type=SmsCodeTypeChoices.CHANGE_PASSWORD)
         except Exception as e:
             return CustomResponse.error_response(
-                message='Kod yozishda xatolik'
+                message=_('Kod yozishda xatolik'),
+                code=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
 
         try:
@@ -60,10 +63,11 @@ class UserForgotPasswordAPIView(APIView):
                     )
         except Exception as e:
             return CustomResponse.error_response(
-                message='Kod yuborishda xatolik'
+                message=_('Kod yuborishda xatolik'),
+                code=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
         user = UserFullDataSerializer(user).data
-        return CustomResponse.success_response(message='Parol tiklash uchun sms kod yuborildi.', data={"user": user})
+        return CustomResponse.success_response(message=_('Parol tiklash uchun sms kod yuborildi.'), data={"user": user})
 
 @extend_schema(summary='🔐 login qilgan hamma uchun')
 class UserResetPasswordAPIView(APIView):
@@ -78,14 +82,14 @@ class UserResetPasswordAPIView(APIView):
         password = request.data.get('password', '').strip()
 
         if not contact:
-            return CustomResponse.error_response(message='Email yoki telefon raqam kelishi shart')
+            return CustomResponse.error_response(message=_('Email yoki telefon raqam kelishi shart'))
 
         if not password:
-            return CustomResponse.error_response(message='Parol kiritilishi shart')
+            return CustomResponse.error_response(message=_('Parol kiritilishi shart'))
 
         user = User.objects.filter(contact=contact).first()
         if not user:
-            return CustomResponse.error_response(message='User topilmadi')
+            return CustomResponse.error_response(message=_('User topilmadi'), code=status.HTTP_404_NOT_FOUND)
 
         user_code_obj = SmsCode.objects.filter(
             contact=contact,
@@ -95,13 +99,13 @@ class UserResetPasswordAPIView(APIView):
         ).order_by('-created_at').first()
 
         if not user_code_obj:
-            return CustomResponse.error_response(message="Kod almashtirish imkoni yo'q, kod tasdiqlanmagan")
+            return CustomResponse.error_response(message=_("Kod almashtirish imkoni yo'q, kod tasdiqlanmagan"))
 
         try:
             validate_password(password, user)
         except ValidationError as e:
             return CustomResponse.error_response(
-                message="Parol talablariga javob bermaydi",
+                message=_("Parol talablariga javob bermaydi"),
                 data={
                     "errors": e.messages
                 }
@@ -109,4 +113,4 @@ class UserResetPasswordAPIView(APIView):
         user.set_password(password)
         user.save(update_fields=['password'])
         user = UserFullDataSerializer(user).data
-        return CustomResponse.success_response(message="Parol muvaffaqiyatli o'zgartirildi", data={"user": user})
+        return CustomResponse.success_response(message=_("Parol muvaffaqiyatli o'zgartirildi"), data={"user": user})

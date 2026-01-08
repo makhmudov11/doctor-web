@@ -20,13 +20,8 @@ class UserProfileRetrieveAPIView(RetrieveAPIView):
 
     def retrieve(self, request, *args, **kwargs):
         role = RoleValidate.get_role(request)
-        print(role)
-        print(RoleValidate.get_token_active_role(request))
-        print(RoleValidate.get_profile_user(request))
         serializer = GET_ROLE_SERIALIZER.get(role)
-        print(serializer)
         obj = self.get_object()
-        print(obj)
         serializer = serializer(obj)
         return CustomResponse.success_response(
             data=serializer.data

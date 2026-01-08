@@ -1,8 +1,10 @@
 from django.utils import timezone
+from rest_framework import status
 from rest_framework.generics import RetrieveUpdateAPIView, RetrieveAPIView, UpdateAPIView
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
+from django.utils.translation import gettext_lazy as _
 
 from apps.users.choices import UserContactTypeChoices
 from apps.users.models import SmsCodeTypeChoices, SmsCode
@@ -45,7 +47,7 @@ class UserDetailUpdateAPIView(UpdateAPIView):
 
             if not sms_code_obj:
                 return CustomResponse.error_response(
-                    message="Telefon raqam yoki email tasdiqlanmagan"
+                    message=_("Telefon raqam yoki email tasdiqlanmagan")
                 )
 
         serializer = self.get_serializer(
@@ -58,7 +60,7 @@ class UserDetailUpdateAPIView(UpdateAPIView):
         serializer.save()
 
         return CustomResponse.success_response(
-            message='Muvaffaqiyatli saqlandi',
+            message=_('Muvaffaqiyatli saqlandi'),
             data=serializer.data
         )
 
@@ -76,7 +78,7 @@ class UserDetailUpdateSendCodeAPIView(APIView):
             contact_type = validate_email_or_phone_number(contact)
             if contact_type is False:
                 return CustomResponse.error_response(
-                    message="Telefon raqam yoki email kiritilishi mumkin."
+                    message=_("Telefon raqam yoki email kiritilishi mumkin.")
                 )
             code = generate_code()
             try:
@@ -86,7 +88,8 @@ class UserDetailUpdateSendCodeAPIView(APIView):
                                            _type=SmsCodeTypeChoices.UPDATE_CONTACT)
             except Exception as e:
                 return CustomResponse.error_response(
-                    message='Kod saqlashda xatolik'
+                    message=_('Kod saqlashda xatolik'),
+                    code=status.HTTP_500_INTERNAL_SERVER_ERROR
                 )
             if contact_type == UserContactTypeChoices.EMAIL:
                 send_verification_code(email=contact, code=code)
@@ -100,7 +103,7 @@ class UserDetailUpdateSendCodeAPIView(APIView):
                     )
             user = self.serializer_class(self.request.user).data
             return CustomResponse.success_response(
-                message='Kod muvaffaqiyatli yuborildi',
+                message=_('Kod muvaffaqiyatli yuborildi'),
                 data=user
             )
 
@@ -148,23 +151,24 @@ class UserChangeRoleAPIView(APIView):
         user = request.user
         if role == RoleValidate.get_token_active_role(request):
             return CustomResponse.error_response(
-                message=f"Hozirgi rolingiz {user.active_role}, yana shunga o'zgartirib bo'lmaydi"
+                message=_(f"Hozirgi rolingiz {user.active_role}, yana shunga o'zgartirib bo'lmaydi")
             )
         if role not in getattr(user, 'roles', []):
             return CustomResponse.error_response(
-                message=f"Userda {role} ro'li mavjud emas"
+                message=_(f"Userda {role} ro'li mavjud emas")
             )
         try:
             token_blacklist(request)
         except Exception as e:
             return CustomResponse.error_response(
-                message=f"Xatolik yuz berdi, {str(e)}"
+                message=_(f"Xatolik yuz berdi, {str(e)}"),
+                code=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
         user.active_role = role
         user.save(update_fields=['active_role'])
         token = get_tokens_for_user(user)
         return CustomResponse.success_response(
-            message="Role muvaffaqiyatli o'zgartirildi",
+            message=_("Role muvaffaqiyatli o'zgartirildi"),
             data={
                 "active_role": user.active_role,
                 "token": token

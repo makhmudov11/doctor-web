@@ -1,4 +1,5 @@
 from drf_spectacular.utils import OpenApiParameter, extend_schema
+from rest_framework import status
 from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.generics import ListAPIView, RetrieveAPIView
 from django_filters.rest_framework import DjangoFilterBackend
@@ -10,7 +11,7 @@ from apps.super_admin.permissions.users import AdminPermission
 from apps.profile.models import DoctorProfile, PatientProfile
 from apps.super_admin.paginations.profile import AdminListPagination
 from apps.utils.CustomResponse import CustomResponse
-
+from django.utils.translation import gettext_lazy as _
 
 @extend_schema(
     parameters=[
@@ -55,12 +56,12 @@ class AdminDoctorProfileRetrieveAPIView(RetrieveAPIView):
         public_id = kwargs.get('public_id', None)
         if public_id is None:
             return CustomResponse.error_response(
-                message="Public id topilmadi"
+                message=_("Public id topilmadi")
             )
         data = self.get_queryset()
         if not data:
             return CustomResponse.error_response(
-                message="Shifokor topilmadi"
+                message=_("Shifokor topilmadi"), code=status.HTTP_404_NOT_FOUND
             )
         serializer = self.serializer_class(instance=data)
         return CustomResponse.success_response(
@@ -110,12 +111,12 @@ class AdminPatientProfileRetrieveAPIView(RetrieveAPIView):
         public_id = kwargs.get('public_id', None)
         if public_id is None:
             return CustomResponse.error_response(
-                message="Public id topilmadi"
+                message=_("Public id topilmadi")
             )
         data = self.get_queryset()
         if not data:
             return CustomResponse.error_response(
-                message="Bemor topilmadi"
+                message=_("Bemor topilmadi"), code=status.HTTP_404_NOT_FOUND
             )
         serializer = self.serializer_class(instance=data)
         return CustomResponse.success_response(
