@@ -39,7 +39,7 @@ CUSTOM_APPS = [
     'apps.banner',
     'apps.service',
     'apps.history',
-    'apps.payment.payme',
+    # 'apps.payment.payme',
 ]
 
 CUSTOM_INSTALLED_APPS = [
