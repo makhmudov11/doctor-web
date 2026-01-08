@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
+
 class CustomUserRoleChoices(models.TextChoices):
     SHIFOKOR = "Shifokor", _("Shifokor")
     ADMIN = "Admin", _("Admin")

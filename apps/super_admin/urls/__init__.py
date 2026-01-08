@@ -8,5 +8,6 @@ urlpatterns = [
     path('login/', AdminLoginAPIView.as_view(), name='admin-login'),
     path('users/', include('apps.super_admin.urls.users')),
     path('users/profile/', include('apps.super_admin.urls.profile')),
-    path('home/', include('apps.super_admin.urls.services'))
+    path('home/', include('apps.super_admin.urls.services')),
+    path('doctor-application/', include('apps.super_admin.urls.doctor_application')),
 ]

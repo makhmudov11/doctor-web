@@ -165,4 +165,6 @@ media/
 apps/utils/firebase.py
 apps/payment
 static/
+apps/notifications
+credentials.json
 

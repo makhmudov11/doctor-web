@@ -41,10 +41,11 @@ class AddPatientDetailSerializer(serializers.ModelSerializer):
 
 class UserAddPatientListSerializer(serializers.Serializer):
     patient = PatientProfileSerializer(read_only=True)
-    add_patients = serializers.SerializerMethodField()
+    add_patients = serializers.SerializerMethodField(default=[])
 
     def get_add_patients(self, obj):
         qs = obj.get('add_patients')
         if not qs.exists():
             return [AddPatientDetailSerializer().data]
         return AddPatientDetailSerializer(instance=qs, many=True).data
+

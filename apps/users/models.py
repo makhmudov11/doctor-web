@@ -112,5 +112,3 @@ class SmsCode(CreateUpdateBaseModel):
         db_table = 'sms_code'
         verbose_name = 'Sms Code'
         verbose_name_plural = 'Sms Codes'
-
-

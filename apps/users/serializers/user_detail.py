@@ -58,7 +58,7 @@ class UserDetailUpdateSerializer(serializers.ModelSerializer):
 class UserDetailRetrieveSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = [ 'contact', 'full_name', 'birth_date', 'image', 'gender']
+        fields = [ 'contact', 'full_name', 'birth_date', 'image', 'gender', 'passport']
 
 class UserSelectRoleSerializer(serializers.Serializer):
     role = serializers.JSONField(default=list)

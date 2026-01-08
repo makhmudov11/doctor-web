@@ -49,6 +49,8 @@ CUSTOM_INSTALLED_APPS = [
     'background_task',
     'rest_framework_simplejwt.token_blacklist',
     'corsheaders',
+    'apps.notifications',
+    'apps.doctor_application',
 
 ]
 
@@ -230,3 +232,10 @@ CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = False
 
 APPEND_SLASH = True
+
+import firebase_admin
+from firebase_admin import credentials
+
+cred_path = os.path.join(BASE_DIR, 'credentials.json')
+cred = credentials.Certificate(cred_path)
+firebase_admin.initialize_app(cred)

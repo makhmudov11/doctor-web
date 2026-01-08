@@ -14,6 +14,12 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+
+
+def home(request):
+    return HttpResponse("Home page")
+
+
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
@@ -24,11 +30,6 @@ from rest_framework_simplejwt.views import TokenRefreshView
 import config.settings
 from apps.utils.swagger.swagger_urls import SPECTACULAR_URL
 
-
-def home(request):
-    return HttpResponse("Home page")
-
-
 TOKEN_REFRESH = [
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh')
 ]
@@ -38,6 +39,8 @@ urlpatterns = [
                   path('admin/', admin.site.urls),
                   path('super-admin/', include('apps.super_admin.urls', namespace='super_admin')),
                   path('users/', include('apps.users.urls', namespace='users')),
+                  path('doctor_application/', include('apps.doctor_application.urls', namespace='doctor_application')),
+                  path('notifications/', include('apps.notifications.urls', namespace='notifications')),
                   path('banner/', include('apps.banner.urls', namespace='banner')),
                   path('service/', include('apps.service.urls', namespace='service')),
                   path('profile/', include('apps.profile.urls', namespace='profile')),
