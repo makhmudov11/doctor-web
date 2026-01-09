@@ -233,9 +233,9 @@ CORS_ALLOW_CREDENTIALS = False
 
 APPEND_SLASH = True
 
-import firebase_admin
-from firebase_admin import credentials
-
-cred_path = os.path.join(BASE_DIR, 'credentials.json')
-cred = credentials.Certificate(cred_path)
-firebase_admin.initialize_app(cred)
+# import firebase_admin
+# from firebase_admin import credentials
+#
+# cred_path = os.path.join(BASE_DIR, 'credentials.json')
+# cred = credentials.Certificate(cred_path)
+# firebase_admin.initialize_app(cred)
