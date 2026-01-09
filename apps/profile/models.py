@@ -25,6 +25,7 @@ class DoctorProfile(CreateUpdateBaseModel):
     specialization = models.CharField(max_length=255, null=True)
     experience_years = models.PositiveSmallIntegerField(default=0)
     following_count = models.PositiveIntegerField(default=0)
+    bio = models.TextField(null=True)
     followers_count = models.PositiveIntegerField(default=0)
     posts_count = models.PositiveSmallIntegerField(default=0)
     rating = models.FloatField(default=0)

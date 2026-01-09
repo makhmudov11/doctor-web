@@ -28,7 +28,7 @@ class DoctorApplication(CreateUpdateBaseModel):
     diplom_image = models.ImageField(upload_to='doctor_application/diplom_image/')
     bio = models.TextField()
     experience_year = models.PositiveSmallIntegerField()
-    speciality = models.CharField(max_length=100)
+    specialization = models.CharField(max_length=100)
     term = models.DateTimeField(null=True)
     status = models.CharField(max_length=50, choices=DoctorApplicationChoices.choices,
                               default=DoctorApplicationChoices.PENDING)

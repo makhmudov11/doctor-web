@@ -6,7 +6,7 @@ from apps.utils.base_models import CreateUpdateBaseModel
 
 
 class FCMDevice(CreateUpdateBaseModel):
-    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, blank=True, related_name='devices', null=True)
+    user = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, blank=True, related_name='devices', null=True)
     token = models.CharField(max_length=100, unique=True, db_index=True)
     device_type = models.CharField(max_length=50, default='', blank=True)
     is_active = models.BooleanField(default=True)

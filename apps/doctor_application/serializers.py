@@ -10,8 +10,9 @@ class DoctorApplicationFullDataSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = DoctorApplication
-        fields = ['id', 'user', 'image', 'region', 'district', 'address', 'full_name', 'birth_date', 'gender', 'passport',
-                  'experience_year', 'passport_image', 'passport_image2', 'diplom_image', 'bio', 'status', 'created_at']
+        fields = ['id', 'user', 'image', 'region', 'district', 'address', 'full_name', 'birth_date', 'gender',
+                  'passport', 'experience_year', 'specialization', 'passport_image', 'passport_image2',
+                  'diplom_image', 'bio', 'status', 'created_at']
 
 
 
@@ -26,7 +27,7 @@ class DoctorApplicationCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = DoctorApplication
         fields = ['id', 'user', 'image', 'region', 'district', 'address', 'full_name', 'birth_date', 'gender',
-                  'passport', 'experience_year', 'passport_image', 'passport_image2', 'diplom_image', 'bio',
+                  'passport', 'experience_year', 'specialization', 'passport_image', 'passport_image2', 'diplom_image', 'bio',
                   'status', 'created_at']
 
         extra_kwargs = {
@@ -36,6 +37,7 @@ class DoctorApplicationCreateSerializer(serializers.ModelSerializer):
             'address': {'required': True},
             'full_name': {'required': True},
             'experience_year': {'required': True},
+            'specialization': {'required': True},
             'gender': {'required': True},
             'passport': {'required': True},
             'passport_image': {'required': True},
@@ -92,4 +94,4 @@ class SuccessDoctorApplicationSerializer(serializers.ModelSerializer):
     class Meta:
         model = DoctorApplication
         fields = ['id', 'user', 'image', 'region', 'district', 'address', 'full_name', 'birth_date', 'gender', 'passport',
-                  'experience_year', 'passport_image', 'passport_image2', 'diplom_image', 'bio', 'status', 'created_at', 'term']
+                  'experience_year', 'specialization', 'passport_image', 'passport_image2', 'diplom_image', 'bio', 'status', 'created_at', 'term']
