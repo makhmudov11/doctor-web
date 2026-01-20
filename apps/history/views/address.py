@@ -54,7 +54,7 @@ class PatientAddressAPIView(APIView):
 @extend_schema(summary='🔐 patient uchun adress create')
 class AddressCreateAPIView(CreateAPIView):
     serializer_class = AddressCreateSerializer
-    # permission_classes = [IsPatient]
+    permission_classes = [IsPatient]
     queryset = Address.objects.all()
 
     def create(self, request, *args, **kwargs):

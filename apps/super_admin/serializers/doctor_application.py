@@ -14,7 +14,7 @@ class AdminDoctorApplicationListSerializer(serializers.ModelSerializer):
         fields = ['id', 'user', 'image', 'region', 'district', 'address', 'full_name', 'birth_date', 'gender',
                   'passport',
                   'experience_year', 'passport_image', 'passport_image2', 'diplom_image', 'bio', 'status', 'created_at',
-                  'term']
+                  'term', 'service_fee']
 
 
 class AdminDoctorApplicationUpdateSerializer(serializers.Serializer):
@@ -24,6 +24,9 @@ class AdminDoctorApplicationUpdateSerializer(serializers.Serializer):
 
     def validate(self, attrs):
         term = attrs.get('term', None)
+        fee = attrs.get('service_fee', None)
+        if fee is None:
+            raise CustomValidationError(detail=_("Shifokor hizmat haqqi kiritilishi shart"))
         if term is None:
             raise CustomValidationError(detail=_("Shikorlik muddati tugash sanasi aniqlanmadi"))
         status = attrs.get('status', None)

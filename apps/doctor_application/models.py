@@ -32,6 +32,7 @@ class DoctorApplication(CreateUpdateBaseModel):
     term = models.DateTimeField(null=True)
     status = models.CharField(max_length=50, choices=DoctorApplicationChoices.choices,
                               default=DoctorApplicationChoices.PENDING)
+    service_fee = models.PositiveBigIntegerField(default=0)
 
     def __str__(self):
         return self.full_name

@@ -25,7 +25,7 @@ class UserForgotPasswordAPIView(APIView):
     Parolni tiklash
     """
     serializer_class = UserForgotPasswordSerializer
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
 
     def post(self, request):
 
@@ -75,7 +75,7 @@ class UserResetPasswordAPIView(APIView):
     Yangi parol kiritish
     """
     serializer_class = UserResetPasswordSerializer
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
 
     def post(self, request):
         contact = request.data.get('contact', '').strip()

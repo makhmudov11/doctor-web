@@ -34,31 +34,29 @@ class AddPatientCreateAPIView(CreateAPIView):
             code=status.HTTP_201_CREATED
         )
 
-
 @extend_schema(summary='🔐 bemor uchun')
-class UserAddPatientListAPIView(ListAPIView):
-    serializer_class = UserAddPatientListSerializer
+class UserAddPatientListAPIView(APIView):
     permission_classes = [IsPatient]
 
-    def get_queryset(self):
-        return AddPatient.objects.filter(patient=RoleValidate.get_profile_user(self.request))
+    def get(self, request):
+        profile = RoleValidate.get_profile_user(request)
 
-    def list(self, request, *args, **kwargs):
-        queryset = self.get_queryset()
-        if not queryset.exists():
+        add_patients = list(
+            AddPatient.objects.filter(patient=profile)
+        )
+
+        if not add_patients:
             return CustomResponse.error_response(
                 message=_("Siz qo'shgan bemorlar topilmadi"),
                 code=status.HTTP_404_NOT_FOUND
             )
 
-        profile = RoleValidate.get_profile_user(request)
-
-        serializer = self.get_serializer({
+        serializer = UserAddPatientListSerializer({
             "patient": profile,
-            "add_patients": queryset
+            "add_patients": add_patients
         })
-        return CustomResponse.success_response(data=serializer.data)
 
+        return CustomResponse.success_response(data=serializer.data)
 
 @extend_schema(summary='🔐 bemor uchun')
 class UserAddPatientDetailAPIView(APIView):

@@ -10,4 +10,5 @@ urlpatterns = [
     path('users/profile/', include('apps.super_admin.urls.profile')),
     path('home/', include('apps.super_admin.urls.services')),
     path('doctor-application/', include('apps.super_admin.urls.doctor_application')),
+    path('medical/', include('apps.super_admin.urls.medical_service')),
 ]

@@ -29,6 +29,7 @@ def add_doctor_role(sender, instance, created, **kwargs):
                 "specialization": instance.specialization,
                 "experience_years": instance.experience_years,
                 "bio": instance.bio,
+                "service_fee": instance.service_fee
             }
         )
 

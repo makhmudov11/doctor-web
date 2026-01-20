@@ -39,7 +39,10 @@ CUSTOM_APPS = [
     'apps.banner',
     'apps.service',
     'apps.history',
-    # 'apps.payment.payme',
+    'paycomuz',
+    'apps.payment',
+    'apps.payment.payme',
+    'apps.transactions'
 ]
 
 CUSTOM_INSTALLED_APPS = [
@@ -51,6 +54,7 @@ CUSTOM_INSTALLED_APPS = [
     'corsheaders',
     'apps.notifications',
     'apps.doctor_application',
+    'channels',
 
 ]
 
@@ -148,7 +152,13 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static'),
+]
+
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
@@ -239,3 +249,29 @@ APPEND_SLASH = True
 # cred_path = os.path.join(BASE_DIR, 'credentials.json')
 # cred = credentials.Certificate(cred_path)
 # firebase_admin.initialize_app(cred)
+
+PAYCOM_SETTINGS = {
+    "KASSA_ID": "693184aadcd3e8ba6b2a7980",
+    "SECRET_KEY": "Fv69&hMxmN9MY?KpkvDAbRQ09bf@wQVshJ0s",
+    "ACCOUNTS": {
+        "KEY": "balance_id"
+    },
+}
+
+ASGI_APPLICATION = "config.asgi.application"
+
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.InMemoryChannelLayer",
+        # "CONFIG": {
+        #     "hosts": [("redis", 6379)],
+        # },
+    },
+}
+
+# CHANNEL_LAYERS = {
+#     "default": {
+#         "BACKEND": "channels.layers.InMemoryChannelLayer",
+#     },
+# }

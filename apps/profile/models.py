@@ -32,6 +32,7 @@ class DoctorProfile(CreateUpdateBaseModel):
     order_count = models.PositiveIntegerField(default=0)
     is_private = models.BooleanField(default=False)
     status = models.BooleanField(default=True)
+    service_fee = models.PositiveBigIntegerField(default=0)
 
     class Meta:
         db_table = 'doctor_profile'

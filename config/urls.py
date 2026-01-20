@@ -14,10 +14,10 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-
+from django.shortcuts import render
 
 def home(request):
-    return HttpResponse("Home page")
+    return render(request, 'aziz.html')
 
 
 from django.conf import settings
@@ -47,6 +47,8 @@ urlpatterns = [
                   path('content/', include('apps.video.urls', namespace='content')),
                   path('history/', include('apps.history.urls', namespace='history')),
                   path('order/', include('apps.order.urls', namespace='order')),
+                  path('payment/', include('apps.payment.urls', namespace='payment')),
+                  path('transactions/', include('apps.transactions.urls', namespace='transactions')),
 
               ] + SPECTACULAR_URL + TOKEN_REFRESH
 

@@ -16,3 +16,13 @@ def validate_email_or_phone_number(contact=''):
         return 'email'
     return 'phone'
 
+
+def parse_payme_time(ts_ms):
+    from datetime import datetime, timezone
+
+    """
+    Convert Payme timestamp (ms) to datetime
+    """
+    if ts_ms is None:
+        return None
+    return datetime.fromtimestamp(ts_ms / 1000, tz=timezone.utc)

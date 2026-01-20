@@ -44,8 +44,10 @@ class UserAddPatientListSerializer(serializers.Serializer):
     add_patients = serializers.SerializerMethodField(default=[])
 
     def get_add_patients(self, obj):
-        qs = obj.get('add_patients')
-        if not qs.exists():
-            return [AddPatientDetailSerializer().data]
+        qs = obj.get('add_patients', [])
+        if not qs:
+            return []
         return AddPatientDetailSerializer(instance=qs, many=True).data
+
+
 

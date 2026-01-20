@@ -29,8 +29,8 @@ class Address(CreateUpdateBaseModel):
         verbose_name = 'Address'
         verbose_name_plural = 'Addresses'
 
-class Appointment(CreateUpdateBaseModel):
-    patient = models.ForeignKey(PatientProfile, on_delete=models.CASCADE, related_name='appointments')
-    doctor_name = models.CharField(max_length=255)
-    date = models.DateTimeField()
-    status = models.CharField(max_length=50)
+# class Appointment(CreateUpdateBaseModel):
+#     patient = models.ForeignKey(PatientProfile, on_delete=models.CASCADE, related_name='appointments')
+#     doctor_name = models.CharField(max_length=255)
+#     date = models.DateTimeField()
+#     status = models.CharField(max_length=50)

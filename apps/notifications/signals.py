@@ -1,22 +1,55 @@
-# # signals.py
-# from django.db.models.signals import post_save
+# from django.db.models.signals import pre_save, post_save
 # from django.dispatch import receiver
-# from .models import Order
-# from yourapp.notifications import Notifications
+#
+# from apps.notifications.thread import send_fcm_async
+# from apps.order.models import Order, OrderStatusChoices
+#
+#
+# @receiver(pre_save, sender=Order)
+# def order_pre_save(sender, instance, **kwargs):
+#     if not instance.pk:
+#         return
+#
+#     old = Order.objects.filter(pk=instance.pk).only("status").first()
+#     instance._old_status = old.status if old else None
+#
 #
 # @receiver(post_save, sender=Order)
-# def send_order_notification(sender, instance, created, **kwargs):
+# def order_post_save(sender, instance, created, **kwargs):
 #     if created:
-#         # Order yangi yaratildi
-#         title = "Yangi order yaratildi"
-#         body = f"Sizning orderingiz qabul qilindi: {instance.total} sum"
-#     elif instance.status == "success":
-#         title = "Order muvaffaqiyatli to‘landi"
-#         body = f"Sizning orderingiz: {instance.total} sum to‘landi"
-#     else:
-#         return  # boshqa statuslar uchun push yubormaymiz
+#         return
 #
-#     # User active device tokenlari
-#     tokens = instance.user.fcmdevice_set.filter(is_active=True).values_list("token", flat=True)
+#     if instance._old_status == instance.status:
+#         return
+#
+#     if instance.status  in [OrderStatusChoices.WAITING, OrderStatusChoices.ON_THE_WAY]:
+#         return
+#
+#     tokens = instance.user.devices.filter(is_active=True).values_list("token", flat=True)
+#
+#     title = body = None
+#     if instance.status == OrderStatusChoices.ACCEPTED:
+#         title = f"Buyurtma #{instance.order_id}"
+#         body = f"Buyurtma qabul qilindi: {instance.doctor.fullname.title()}."
+#
+#     elif instance.status == OrderStatusChoices.ARRIVED:
+#         title = f"Buyurtma #{instance.order_id}"
+#         body = f"Shifokor yetib keldi."
+#     elif instance.status == OrderStatusChoices.CANCELLED:
+#         title = f"Buyurtma #{instance.order_id}"
+#         body = f"Buyurtma bekor qilindi."
+#     elif instance.status == OrderStatusChoices.FINISHED:
+#         title = f"Buyurtma #{instance.order_id}"
+#         body = f"Buyurtmangiz uchun rahmat"
+#
+#
 #     for token in tokens:
-#         Notifications.send_notification(token, title, body)
+#         send_fcm_async(
+#             token=token,
+#             title=title,
+#             body=body,
+#             extra_data={
+#                 "order_id": str(instance.id),
+#                 "status": instance.status
+#             }
+#         )
