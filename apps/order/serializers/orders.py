@@ -134,3 +134,17 @@ class OrderHistoryAndBalanceSerializer(serializers.ModelSerializer):
 class UserHistoryResponseSerializer(serializers.Serializer):
     orders = OrderHistoryAndBalanceSerializer()
     transactions = UserTransactionHistorySerializer()
+
+class OrderDetailDoctorUpdateSerializer(serializers.Serializer):
+    order_id = serializers.CharField(max_length=255)
+    doctor = serializers.IntegerField()
+
+    def validate_order_id(self, value):
+        if not value:
+            raise CustomValidationError(detail=_("Buyurtma raqami kelishi shart"))
+        return value
+
+    def validate_doctor(self, value):
+        if not value:
+            raise CustomValidationError(detail=_("Shifokor public id kelishi shart"))
+        return value

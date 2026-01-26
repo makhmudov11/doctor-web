@@ -261,17 +261,17 @@ PAYCOM_SETTINGS = {
 ASGI_APPLICATION = "config.asgi.application"
 
 
-CHANNEL_LAYERS = {
-    "default": {
-        "BACKEND": "channels_redis.core.InMemoryChannelLayer",
-        # "CONFIG": {
-        #     "hosts": [("redis", 6379)],
-        # },
-    },
-}
-
 # CHANNEL_LAYERS = {
 #     "default": {
-#         "BACKEND": "channels.layers.InMemoryChannelLayer",
+#         "BACKEND": "channels_redis.core.InMemoryChannelLayer",
+#         # "CONFIG": {
+#         #     "hosts": [("redis", 6379)],
+#         # },
 #     },
 # }
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer",
+    },
+}

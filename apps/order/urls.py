@@ -3,7 +3,8 @@ from django.urls import path
 from apps.order.views.add_patient import AddPatientCreateAPIView, UserAddPatientListAPIView, \
     UserAddPatientDetailAPIView
 from apps.order.views.medical_service import OrderServiceListAPIView
-from apps.order.views.orders import OrderCreateAPIView, GetOrderDetailAPIView, UserOrderAndBalanceHistoryListAPIView
+from apps.order.views.orders import OrderCreateAPIView, GetOrderDetailAPIView, UserOrderAndBalanceHistoryListAPIView, \
+    OrderDetailDoctorUpdateAPIView
 
 app_name = 'order'
 
@@ -14,5 +15,6 @@ urlpatterns = [
     path('services/list', OrderServiceListAPIView.as_view(), name='order-services'),
     path('create/', OrderCreateAPIView.as_view(), name='order-create'),
     path('detail/<order_id>', GetOrderDetailAPIView.as_view(), name='order-detail'),
+    # path('detail/doctor/update/', OrderDetailDoctorUpdateAPIView.as_view(), name='order-detail-doctor-update'),
     path('balance/history/', UserOrderAndBalanceHistoryListAPIView.as_view(), name='order-balance-history-list'),
 ]

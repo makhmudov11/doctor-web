@@ -12,7 +12,7 @@ from apps.history.models import Address
 from apps.order.models import Order, AddPatient, PaymentTypeChoice, OrderDetailImage, OrderDetail, MedicalService, \
     OrderStatusChoices
 from apps.order.serializers.orders import OrderCreateSerializer, OrderDetailFullSerializer, MedicalServiceSerializer, \
-    OrderHistoryAndBalanceSerializer, UserHistoryResponseSerializer
+    OrderHistoryAndBalanceSerializer, UserHistoryResponseSerializer, OrderDetailDoctorUpdateSerializer
 from apps.profile.models import DoctorProfile
 from apps.profile.permission import IsPatient
 from apps.transactions.models import UserUniqueBalanceID, Transactions, TransactionChoices
@@ -207,4 +207,39 @@ class UserOrderAndBalanceHistoryListAPIView(APIView):
         return CustomResponse.success_response(
             data=history
         )
+
+class OrderDetailDoctorUpdateAPIView(APIView):
+    permission_classes = [IsPatient]
+    serializer_class = OrderDetailDoctorUpdateSerializer
+
+    def patch(self, request):
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        order_id = serializer.validated_data['order_id']
+        doctor = serializer.validated_data['doctor']
+
+        try:
+            order = Order.objects.get(order_id=order_id)
+            doctor_profile = DoctorProfile.objects.get(public_id=doctor)
+        except Order.DoesNotExist:
+            return CustomResponse.error_response(
+                message=_("Buyurtma topilmadi"),
+                code=status.HTTP_404_NOT_FOUND
+            )
+        except DoctorProfile.DoesNotExist:
+            return CustomResponse.error_response(
+                message=_("Shifokor topilmadi"),
+                code=status.HTTP_404_NOT_FOUND
+            )
+        if order.status != OrderStatusChoices.WAITING:
+            return CustomResponse.error_response(
+                message=_("Shifokor almashtirish imkoni yo'q")
+            )
+        order.doctor = doctor_profile
+        order.save(update_fields=['doctor'])
+        return CustomResponse.success_response(
+            data=OrderDetailFullSerializer(order).data
+        )
+
+
 
