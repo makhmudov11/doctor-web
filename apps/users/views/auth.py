@@ -1,4 +1,5 @@
-from django.contrib.auth import get_user_model, logout
+from django.contrib.auth import get_user_model
+from django.db import transaction
 
 from rest_framework import status
 from rest_framework.generics import CreateAPIView
@@ -6,6 +7,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.status import HTTP_401_UNAUTHORIZED, HTTP_404_NOT_FOUND
 from rest_framework.views import APIView
 from django.utils.translation import gettext_lazy as _
+
+from apps.notifications.models import FCMDevice
 from apps.users.models import SmsCodeTypeChoices, UserContactTypeChoices, SmsCode
 from apps.users.serializers.auth import RegisterSerializer, LoginSerializer
 from apps.users.serializers.user_detail import UserFullDataSerializer
@@ -99,6 +102,22 @@ class LoginAPIView(APIView):
         if not user.check_password(password):
             return CustomResponse.error_response(message=_("Parol noto'g'ri"), code=HTTP_401_UNAUTHORIZED)
 
+        fcm_token = serializer.validated_data.get('fcm_token', None)
+
+        try:
+            with transaction.atomic():
+                if fcm_token:
+                    device_obj = FCMDevice(
+                        user=user,
+                        token=fcm_token)
+                    device_type=serializer.validated_data.get('device_type', None)
+                    if device_type:
+                        device_obj.device_type = device_type
+                    device_obj.save()
+        except Exception as e:
+            return CustomResponse.error_response(
+                message=_(f"Xatolik: {str(e)}")
+            )
         token = get_tokens_for_user(user)
         return CustomResponse.success_response(
             message=_("Login muvaqqiyatli yakunlandi"),

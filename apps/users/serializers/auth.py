@@ -4,6 +4,7 @@ from django.contrib.auth.password_validation import validate_password
 from rest_framework import serializers
 from rest_framework.status import HTTP_400_BAD_REQUEST
 
+from apps.notifications.models import FcmDeviceChoice
 from apps.users.choices import UserContactTypeChoices
 from apps.utils.CustomValidationError import CustomValidationError
 from apps.utils.validates import validate_email_or_phone_number
@@ -75,8 +76,10 @@ class RegisterSerializer(serializers.ModelSerializer):
 
 
 class LoginSerializer(serializers.Serializer):
-    contact = serializers.CharField(max_length=100)
-    password = serializers.CharField(max_length=100)
+    contact = serializers.CharField(max_length=100, required=True)
+    password = serializers.CharField(max_length=100, required=True)
+    fcm_token = serializers.CharField(max_length=255, allow_null=True, allow_blank=True)
+    device_type = serializers.ChoiceField(allow_null=True, allow_blank=True, choices=FcmDeviceChoice.choices)
 
     def validate(self, attrs):
         contact = attrs.get('contact', '')

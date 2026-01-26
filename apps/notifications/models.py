@@ -1,14 +1,15 @@
 from django.db import models
-from pycodestyle import blank_lines
 
 from apps.users.models import CustomUser
 from apps.utils.base_models import CreateUpdateBaseModel
-
+class FcmDeviceChoice(models.TextChoices):
+    IOS = 'ios', 'IOS'
+    ANDROID = 'android', 'ANDROID'
 
 class FCMDevice(CreateUpdateBaseModel):
     user = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, blank=True, related_name='devices', null=True)
     token = models.CharField(max_length=100, unique=True, db_index=True)
-    device_type = models.CharField(max_length=50, default='', blank=True)
+    device_type = models.CharField(max_length=50, default='', choices=FcmDeviceChoice.choices, blank=True)
     is_active = models.BooleanField(default=True)
 
     def __str__(self):

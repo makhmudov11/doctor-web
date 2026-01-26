@@ -7,7 +7,7 @@ from apps.notifications.models import FCMDevice, Notification
 
 @admin.register(FCMDevice)
 class AdminFCMDevice(admin.ModelAdmin):
-    list_display = ['id', 'user', 'token', 'is_active']
+    list_display = ['id', 'user', 'token', 'device_type', 'is_active']
 @admin.register(Notification)
 class AdminFCMDevice(admin.ModelAdmin):
     list_display = ['id', 'get_device_user_full_name', 'is_read', 'read_at', 'deleted_at', 'message']
