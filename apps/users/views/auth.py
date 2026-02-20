@@ -107,13 +107,14 @@ class LoginAPIView(APIView):
         try:
             with transaction.atomic():
                 if fcm_token:
-                    device_obj = FCMDevice(
+                    device_type = serializer.validated_data.get('device_type', None)
+                    FCMDevice.objects.update_or_create(
                         user=user,
-                        token=fcm_token)
-                    device_type=serializer.validated_data.get('device_type', None)
-                    if device_type:
-                        device_obj.device_type = device_type
-                    device_obj.save()
+                        registration_id=fcm_token,
+                        defaults={
+                            'type': device_type or 'android',
+                        }
+                    )
         except Exception as e:
             return CustomResponse.error_response(
                 message=_(f"Xatolik: {str(e)}")
