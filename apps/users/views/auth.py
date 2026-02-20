@@ -115,6 +115,7 @@ class LoginAPIView(APIView):
                             'type': device_type or 'android',
                         }
                     )
+
         except Exception as e:
             return CustomResponse.error_response(
                 message=_(f"Xatolik: {str(e)}")
