@@ -110,12 +110,12 @@ class LoginAPIView(APIView):
                     device_type = serializer.validated_data.get('device_type', None)
                     FCMDevice.objects.update_or_create(
                         user=user,
-                        registration_id=fcm_token,
+                        token=fcm_token,
                         defaults={
-                            'type': device_type or 'android',
+                            'device_type': device_type or 'android',
+                            'is_active': True,
                         }
                     )
-
         except Exception as e:
             return CustomResponse.error_response(
                 message=_(f"Xatolik: {str(e)}")
